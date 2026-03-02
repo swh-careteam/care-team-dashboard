@@ -456,7 +456,7 @@ async function getObservations() {
 // ── AGENTS ──
 async function getAgents(queueId) {
   try {
-    const d = await api(`/api/v2/routing/queues/${queueId}/users?pageSize=50&pageNumber=1&joined=false&sortBy=name&sortOrder=asc&expand=presence`);
+    const d = await api(`/api/v2/routing/queues/${queueId}/users?pageSize=50&pageNumber=1&joined=true&sortBy=name&sortOrder=asc&expand=presence`);
     return (d.entities || []).length;
   } catch { return null; }
 }
