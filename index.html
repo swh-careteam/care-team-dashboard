@@ -95,7 +95,27 @@
       border-right: 1px solid color-mix(in srgb, var(--pod-color) 30%, transparent);
       padding: 0.75rem 0.5rem;
       flex-shrink: 0;
+      cursor: pointer;
+      transition: background 0.2s;
     }
+    .pod-label-col:hover {
+      background: color-mix(in srgb, var(--pod-color) 22%, rgba(4,7,15,0.7));
+    }
+    .pod-label-col:hover .pod-label-text {
+      filter: brightness(1.4);
+    }
+    .pod-label-col .launch-hint {
+      font-family: var(--font-h);
+      font-size: clamp(0.38rem, 0.65vw, 0.52rem);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--pod-color) 60%, transparent);
+      margin-top: 0.4rem;
+      opacity: 0;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+    .pod-label-col:hover .launch-hint { opacity: 1; }
     .pod-label-text {
       font-family: var(--font-h);
       font-size: clamp(0.85rem, 1.6vw, 1.3rem);
@@ -231,6 +251,7 @@ const CONFIG = {
   PODS: [
     {
       id: 1, label: 'POD 1', color: '#e53e3e',
+      reportUrl: 'https://apps.usw2.pure.cloud/directory/#/analytics/queues/activity?savedView=fb929a72-480c-4b63-96af-e8ccfdc85760',
       queues: [
         { id: '4879c768-5ed5-4949-aff1-ccbb0e3dad99', label: 'Chat Queue'  },
         { id: '0187e19e-f563-441e-ad62-2965f43de61f', label: 'Email Queue' },
@@ -239,6 +260,7 @@ const CONFIG = {
     },
     {
       id: 2, label: 'POD 2', color: '#805ad5',
+      reportUrl: 'https://apps.usw2.pure.cloud/directory/#/analytics/queues/activity?savedView=32f1e023-d6d5-4b4c-8075-650b35ecd67a',
       queues: [
         { id: '250f7bde-3237-487b-8d91-88e87c41ee37', label: 'Chat Queue'  },
         { id: '7c2f0f59-bcd2-4b3e-884f-230f35b3d77d', label: 'Email Queue' },
@@ -247,6 +269,7 @@ const CONFIG = {
     },
     {
       id: 3, label: 'POD 3', color: '#3182ce',
+      reportUrl: 'https://apps.usw2.pure.cloud/directory/#/analytics/queues/activity?savedView=19b06f15-c033-4b65-a039-47dbf7da85ec',
       queues: [
         { id: '9d59c34a-3bb0-44d6-ab52-b609a4a42025', label: 'Chat Queue'  },
         { id: '8718ee30-ce41-4256-b35b-2b4287f210f5', label: 'Email Queue' },
@@ -255,6 +278,7 @@ const CONFIG = {
     },
     {
       id: 4, label: 'POD 4', color: '#d69e2e',
+      reportUrl: 'https://apps.usw2.pure.cloud/directory/#/analytics/queues/activity?savedView=b05bac58-65a2-430e-bd9f-3eda051b840b',
       queues: [
         { id: '24bbef42-f0e9-4636-9c7b-312fe7369337', label: 'Chat Queue'  },
         { id: 'a80216ca-0654-4540-bfe9-bdaa6df29a15', label: 'Email Queue' },
@@ -489,9 +513,14 @@ function render(obs, agents) {
 
       // POD label sidebar
       const labelCol=document.createElement('div'); labelCol.className='pod-label-col';
+      if(pod.reportUrl) labelCol.addEventListener('click', () => window.open(pod.reportUrl, '_blank'));
       const labelSpan=document.createElement('span'); labelSpan.className='pod-label-text';
       labelSpan.textContent=pod.label;
-      labelCol.appendChild(labelSpan); podRow.appendChild(labelCol);
+      labelCol.appendChild(labelSpan);
+      if(pod.reportUrl) {
+        const hint=document.createElement('div'); hint.className='launch-hint'; hint.textContent='View Report';
+        labelCol.appendChild(hint);
+      } podRow.appendChild(labelCol);
 
       // Queue grid
       const queuesDiv=document.createElement('div'); queuesDiv.className='pod-queues'; queuesDiv.id=`pod-queues-${pod.id}`;
