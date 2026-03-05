@@ -7,20 +7,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --bg:       #04070f;
-      --green:    #00e676;
-      --amber:    #ffab00;
-      --text:     #d0e4ff;
-      --muted:    #3a5880;
-      --font-h:   'Rajdhani', sans-serif;
-      --font-b:   'Exo 2', sans-serif;
+      --bg:     #04070f;
+      --green:  #00e676;
+      --amber:  #ffab00;
+      --text:   #d0e4ff;
+      --muted:  #3a5880;
+      --font-h: 'Rajdhani', sans-serif;
+      --font-b: 'Exo 2', sans-serif;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; }
     body {
-      background: var(--bg);
-      font-family: var(--font-b);
-      min-height: 100vh;
+      background: var(--bg); font-family: var(--font-b); min-height: 100vh;
       background-image:
         radial-gradient(ellipse 120% 80% at 50% -10%, rgba(10,30,80,0.6) 0%, transparent 60%),
         radial-gradient(ellipse 60% 40% at 20% 80%,  rgba(10,20,60,0.4) 0%, transparent 50%),
@@ -35,21 +33,20 @@
         radial-gradient(1px 1px at 57% 78%, rgba(255,255,255,0.4) 0%, transparent 100%),
         radial-gradient(1px 1px at 72% 33%, rgba(255,255,255,0.3) 0%, transparent 100%),
         radial-gradient(1.5px 1.5px at 84% 14%, rgba(200,220,255,0.5) 0%, transparent 100%),
-        radial-gradient(1px 1px at 91% 68%, rgba(255,255,255,0.4) 0%, transparent 100%),
         radial-gradient(1px 1px at 14% 87%, rgba(255,255,255,0.35) 0%, transparent 100%),
         radial-gradient(1.5px 1.5px at 33% 41%, rgba(180,210,255,0.55) 0%, transparent 100%),
         radial-gradient(1.5px 1.5px at 76% 57%, rgba(180,210,255,0.4) 0%, transparent 100%);
     }
+
+    /* ── WRAPPER & HEADER ── */
     .wrapper {
       position: relative; z-index: 1;
-      max-width: 1400px;
-      margin: 0 auto;
+      max-width: 1600px; margin: 0 auto;
       padding: clamp(0.75rem,2vw,2rem) clamp(0.5rem,2vw,2rem) 2rem;
     }
     header {
       display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: clamp(0.75rem,1.5vw,1.5rem);
-      flex-wrap: wrap; gap: 0.75rem;
+      margin-bottom: clamp(0.5rem,1vw,1rem); flex-wrap: wrap; gap: 0.75rem;
     }
     .brand { display: flex; align-items: center; gap: 0.75rem; }
     .brand-icon {
@@ -60,8 +57,8 @@
     .brand-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .brand-name { font-family: var(--font-h); font-size: clamp(1rem,2vw,1.6rem); font-weight: 700; color: #fff; letter-spacing: 0.02em; line-height: 1; }
     .brand-sub  { font-size: clamp(0.5rem,1vw,0.65rem); font-weight: 500; color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; margin-top: 3px; }
-    .header-right { display: flex; align-items: center; gap: clamp(0.75rem,2vw,1.5rem); flex-wrap: wrap; }
     .header-line { flex: 1; height: 1px; margin: 0 1rem; background: linear-gradient(90deg, rgba(58,128,255,0.25), rgba(58,128,255,0.05)); min-width: 40px; }
+    .header-right { display: flex; align-items: center; gap: clamp(0.75rem,2vw,1.5rem); flex-wrap: wrap; }
     .clock { font-family: var(--font-h); font-size: clamp(1rem,2vw,1.5rem); font-weight: 600; color: var(--text); letter-spacing: 0.05em; font-variant-numeric: tabular-nums; white-space: nowrap; }
     .live-pill {
       display: flex; align-items: center; gap: 0.45rem;
@@ -75,67 +72,97 @@
     .live-dot.pulse { animation: livepulse 1.8s ease-in-out infinite; }
     @keyframes livepulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.3;transform:scale(0.6)} }
 
-    /* ── POD LAYOUT ── */
-    .pods-container { display: flex; flex-direction: column; gap: clamp(0.5rem,1.5vw,1.1rem); }
+    /* ── VIEW ALL BUTTON ── */
+    .view-all-bar {
+      display: flex; justify-content: center;
+      margin-bottom: clamp(0.6rem,1.2vw,1.1rem);
+    }
+    .btn-view-all {
+      font-family: var(--font-h); font-size: clamp(0.7rem,1.1vw,0.9rem); font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 0.45rem 1.6rem; border-radius: 8px; border: 1.5px solid rgba(58,150,255,0.55);
+      background: rgba(26,90,255,0.1); color: #7ec4ff;
+      box-shadow: 0 0 18px rgba(26,100,255,0.2), inset 0 0 12px rgba(26,100,255,0.05);
+      cursor: pointer; transition: all 0.2s; white-space: nowrap; text-decoration: none;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .btn-view-all:hover {
+      background: rgba(26,90,255,0.22); border-color: rgba(80,170,255,0.8);
+      color: #b8dcff; box-shadow: 0 0 28px rgba(26,100,255,0.4), inset 0 0 16px rgba(26,100,255,0.1);
+      transform: translateY(-1px);
+    }
+    .btn-view-all svg { flex-shrink: 0; }
+
+    /* ── MAIN GRID: pods left, voice panels right ── */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: clamp(0.6rem,1.2vw,1.1rem);
+      align-items: stretch;
+    }
+
+    /* ── POD ROWS ── */
+    .pods-container { display: flex; flex-direction: column; gap: clamp(0.5rem,1.2vw,1rem); }
     .pod-row {
-      display: flex; gap: 0;
+      display: flex; flex: 1;
       border-radius: 16px; overflow: hidden;
       border: 2px solid var(--pod-color);
       box-shadow: 0 0 28px color-mix(in srgb, var(--pod-color) 28%, transparent),
                   0 0 56px color-mix(in srgb, var(--pod-color) 10%, transparent);
       background: rgba(4,7,15,0.5);
     }
-
-    /* ── POD LABEL SIDEBAR — horizontal name ── */
     .pod-label-col {
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      width: clamp(64px, 8vw, 110px);
-      min-width: clamp(64px, 8vw, 110px);
+      width: clamp(64px,8vw,110px); min-width: clamp(64px,8vw,110px);
       background: color-mix(in srgb, var(--pod-color) 10%, rgba(4,7,15,0.7));
       border-right: 1px solid color-mix(in srgb, var(--pod-color) 30%, transparent);
-      padding: 0.75rem 0.5rem;
-      flex-shrink: 0;
-      cursor: pointer;
-      transition: background 0.2s;
+      padding: 0.75rem 0.5rem; flex-shrink: 0;
     }
-    .pod-label-col:hover {
-      background: color-mix(in srgb, var(--pod-color) 22%, rgba(4,7,15,0.7));
-    }
-    .pod-label-col:hover .pod-label-text {
-      filter: brightness(1.4);
-    }
-    .pod-label-col .launch-hint {
-      font-family: var(--font-h);
-      font-size: clamp(0.38rem, 0.65vw, 0.52rem);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: color-mix(in srgb, var(--pod-color) 60%, transparent);
-      margin-top: 0.4rem;
-      opacity: 0;
-      transition: opacity 0.2s;
-      white-space: nowrap;
-    }
-    .pod-label-col:hover .launch-hint { opacity: 1; }
     .pod-label-text {
-      font-family: var(--font-h);
-      font-size: clamp(0.85rem, 1.6vw, 1.3rem);
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--pod-color);
+      font-family: var(--font-h); font-size: clamp(0.85rem,1.6vw,1.3rem); font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--pod-color);
       text-shadow: 0 0 16px color-mix(in srgb, var(--pod-color) 70%, transparent);
-      text-align: center;
-      line-height: 1.2;
-      white-space: nowrap;
+      text-align: center; line-height: 1.2; white-space: nowrap;
     }
+    @keyframes podAlertPulse {
+      0%,100% { opacity:1; filter: brightness(1) drop-shadow(0 0 8px var(--pod-color)) drop-shadow(0 0 20px var(--pod-color)); }
+      50%     { opacity:0.4; filter: brightness(1.8) drop-shadow(0 0 2px var(--pod-color)); }
+    }
+    .pod-label-text.alerting { animation: podAlertPulse 1.6s ease-in-out infinite; }
 
     .pod-queues {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      flex: 1; min-width: 0; gap: 0;
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      flex: 1; min-width: 0;
     }
     .pod-queues > .card { border-radius: 0; border-right: 1px solid rgba(255,255,255,0.05); }
     .pod-queues > .card:last-child { border-right: none; }
+
+    /* ── RIGHT VOICE PANELS ── */
+    .voice-panels { display: flex; flex-direction: column; gap: clamp(0.5rem,1.2vw,1rem); }
+    .voice-panel {
+      flex: 1; display: flex; flex-direction: column;
+      border-radius: 16px; overflow: hidden;
+      border: 2px solid var(--panel-color);
+      box-shadow: 0 0 24px color-mix(in srgb, var(--panel-color) 25%, transparent),
+                  0 0 48px color-mix(in srgb, var(--panel-color) 8%, transparent);
+      background: rgba(4,7,15,0.5);
+    }
+    .voice-panel-header {
+      padding: clamp(0.5rem,1vw,0.9rem) clamp(0.6rem,1.2vw,1.1rem) clamp(0.3rem,0.6vw,0.55rem);
+      border-bottom: 1px solid color-mix(in srgb, var(--panel-color) 25%, transparent);
+      background: color-mix(in srgb, var(--panel-color) 8%, rgba(4,7,15,0.7));
+    }
+    .voice-panel-title {
+      font-family: var(--font-h); font-size: clamp(0.7rem,1.1vw,0.95rem); font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase; color: #fff; line-height: 1.2;
+      text-shadow: 0 0 14px color-mix(in srgb, var(--panel-color) 50%, transparent);
+    }
+    @keyframes panelAlertPulse {
+      0%,100% { opacity:1; text-shadow: 0 0 8px var(--panel-color), 0 0 20px var(--panel-color); filter: brightness(1.5); }
+      50%     { opacity:0.4; text-shadow: 0 0 2px var(--panel-color); filter: brightness(1); }
+    }
+    .voice-panel-title.alerting { animation: panelAlertPulse 1.6s ease-in-out infinite; }
+    .voice-panel > .card { border-radius: 0; flex: 1; }
 
     /* ── CARD ── */
     .card {
@@ -161,38 +188,29 @@
     .card.crit      { animation: critbackglow 3.5s ease-in-out infinite; }
 
     /* ── CARD HEAD ── */
-    .card-head { display: flex; align-items: center; justify-content: space-between; padding: clamp(0.5rem,1.2vw,1rem) clamp(0.5rem,1.2vw,1.1rem) clamp(0.35rem,0.8vw,0.75rem); gap: 0.3rem; flex-wrap: wrap; }
-    .card-name { font-family: var(--font-h); font-size: clamp(0.65rem,1.2vw,1rem); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; display:flex; align-items:center; gap:0.4rem; white-space: nowrap; }
-    .badge {
-      font-family: var(--font-h); font-size: clamp(0.45rem,0.7vw,0.6rem); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-      padding: 0.18rem 0.55rem; border-radius: 20px; border: 1px solid; white-space: nowrap; flex-shrink: 0; transition: all 0.4s;
-    }
+    .card-head { display: flex; align-items: center; justify-content: space-between; padding: clamp(0.4rem,1vw,0.85rem) clamp(0.5rem,1.2vw,1.1rem) clamp(0.3rem,0.6vw,0.6rem); gap: 0.3rem; flex-wrap: wrap; }
+    .card-name { font-family: var(--font-h); font-size: clamp(0.6rem,1.1vw,0.9rem); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; display:flex; align-items:center; gap:0.4rem; white-space: nowrap; }
+    .badge { font-family: var(--font-h); font-size: clamp(0.42rem,0.65vw,0.58rem); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.16rem 0.5rem; border-radius: 20px; border: 1px solid; white-space: nowrap; flex-shrink: 0; transition: all 0.4s; }
     .badge.warn      { color: var(--amber); border-color: rgba(255,171,0,0.55);  background: rgba(255,171,0,0.10); }
     .badge.crit      { color: #ff5555;      border-color: rgba(255,85,85,0.5);   background: rgba(255,85,85,0.08); }
     .badge.no-agents { color: #ff4444;      border-color: rgba(255,68,68,0.6);   background: rgba(255,68,68,0.1); animation: critglow 3.5s ease-in-out infinite; }
 
     /* ── STATS ── */
     .stats { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: end; }
-    .stat  { padding: clamp(0.5rem,1.2vw,1.15rem) clamp(0.3rem,0.6vw,0.6rem) clamp(0.4rem,0.8vw,0.8rem); display: flex; flex-direction: column; align-items: center; text-align: center; justify-content: flex-end; }
-    .stat-label { font-family: var(--font-h); font-size: clamp(0.44rem,0.8vw,0.62rem); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #c8dff5; margin-bottom: clamp(0.2rem,0.4vw,0.35rem); height: 2.4em; display:block; text-align:center; line-height:1.2; }
-    .stat-val   { font-family: var(--font-h); font-size: clamp(1.8rem,3.5vw,2.8rem); font-weight: 700; line-height: 1; letter-spacing: -0.01em; transition: color 0.5s; }
-    .stat-unit  { font-size: clamp(0.4rem,0.68vw,0.6rem); color: #c8dff5; margin-top: 0.2rem; letter-spacing: 0.06em; }
+    .stat  { padding: clamp(0.4rem,1vw,1rem) clamp(0.25rem,0.5vw,0.5rem) clamp(0.35rem,0.7vw,0.7rem); display: flex; flex-direction: column; align-items: center; text-align: center; justify-content: flex-end; }
+    .stat-label { font-family: var(--font-h); font-size: clamp(0.42rem,0.75vw,0.6rem); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #c8dff5; margin-bottom: clamp(0.15rem,0.35vw,0.3rem); height: 2.4em; display:block; text-align:center; line-height:1.2; }
+    .stat-val   { font-family: var(--font-h); font-size: clamp(1.6rem,3.2vw,2.6rem); font-weight: 700; line-height: 1; letter-spacing: -0.01em; transition: color 0.5s; }
+    .stat-unit  { font-size: clamp(0.38rem,0.65vw,0.58rem); color: #c8dff5; margin-top: 0.2rem; letter-spacing: 0.06em; }
     @keyframes numflash { 0%{opacity:0.3;transform:scale(0.94)} 100%{opacity:1;transform:scale(1)} }
     .stat-val.flash { animation: numflash 0.35s cubic-bezier(0.16,1,0.3,1); }
     @keyframes agentpulse { 0%,100%{opacity:1;text-shadow:0 0 0px rgba(255,68,68,0)} 50%{opacity:0.5;text-shadow:0 0 22px rgba(255,68,68,0.9)} }
     .c-agent-zero { color: #ff4444; animation: agentpulse 3.5s ease-in-out infinite; }
-    @keyframes podAlertPulse {
-      0%,100% { opacity:1; filter: brightness(1) drop-shadow(0 0 8px var(--pod-color)) drop-shadow(0 0 20px var(--pod-color)); }
-      50%     { opacity:0.4; filter: brightness(1.8) drop-shadow(0 0 2px var(--pod-color)); }
-    }
-    .pod-label-text.alerting { animation: podAlertPulse 1.6s ease-in-out infinite; }
 
     /* ── CARD FOOT ── */
-    .card-foot { display: flex; align-items: center; padding: clamp(0.3rem,0.6vw,0.6rem) clamp(0.5rem,1vw,1.1rem) clamp(0.35rem,0.6vw,0.6rem); font-size: clamp(0.38rem,0.68vw,0.55rem); color: var(--muted); }
+    .card-foot { display: flex; align-items: center; padding: clamp(0.25rem,0.5vw,0.5rem) clamp(0.5rem,1vw,1rem) clamp(0.3rem,0.55vw,0.55rem); font-size: clamp(0.36rem,0.65vw,0.53rem); color: var(--muted); }
     .foot-left { display: flex; align-items: center; gap: 0.4rem; }
     .act-dot   { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; }
     .act-dot.live { background: var(--green); box-shadow: 0 0 6px rgba(0,230,118,0.8); animation: livepulse 2s ease-in-out infinite; }
-    .act-dot.dead { background: var(--muted); }
 
     /* ── AUTH ── */
     #auth-overlay {
@@ -202,8 +220,8 @@
     }
     .auth-logo { width: 100px; height: 100px; margin-bottom: 24px; filter: drop-shadow(0 0 28px rgba(59,130,246,0.55)); }
     .auth-logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
-    #auth-overlay h1 { font-family: var(--font-h); font-size: 2.2rem; font-weight: 800; color: #fff; letter-spacing: -0.02em; margin-bottom: 6px; text-shadow: 0 0 40px rgba(59,130,246,0.3); }
-    .auth-subtitle { font-size: 1.0rem; font-weight: 500; color: #60a5fa; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 20px; }
+    #auth-overlay h1 { font-family: var(--font-h); font-size: 2.2rem; font-weight: 800; color: #fff; letter-spacing: -0.02em; margin-bottom: 6px; }
+    .auth-subtitle { font-size: 1rem; font-weight: 500; color: #60a5fa; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 20px; }
     #auth-overlay p { color: #94a3b8; font-size: 0.9rem; text-align: center; max-width: 340px; line-height: 1.65; margin-bottom: 28px; }
     .btn-auth {
       background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: #fff;
@@ -212,8 +230,7 @@
       cursor: pointer; transition: all 0.2s ease;
       box-shadow: 0 4px 24px rgba(37,99,235,0.45), 0 0 0 1px rgba(255,255,255,0.06);
     }
-    .btn-auth:hover  { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); transform: translateY(-1px); }
-    .btn-auth:active { transform: translateY(0); }
+    .btn-auth:hover { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); transform: translateY(-1px); }
 
     /* ── TOAST ── */
     #toast {
@@ -227,12 +244,10 @@
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-thumb { background: rgba(58,128,255,0.2); border-radius: 4px; }
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 700px) {
-      .pod-queues { grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 400px) {
-      .pod-queues { grid-template-columns: 1fr; }
+    @media (max-width: 900px) {
+      .main-grid { grid-template-columns: 1fr; }
+      .voice-panels { flex-direction: row; flex-wrap: wrap; }
+      .voice-panel { min-width: 260px; }
     }
   </style>
 </head>
@@ -248,10 +263,10 @@ const LOGO_SRC = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAACgCAYAAACL
 const CONFIG = {
   CLIENT_ID: 'b08e2b01-639a-4723-a708-7e479696255f',
   REGION:    'usw2.pure.cloud',
+  ALL_QUEUES_URL: 'https://apps.usw2.pure.cloud/directory/#/analytics/queues/activity?savedView=39d46c93-d7b7-4565-b87c-fa519b0599ff',
   PODS: [
     {
       id: 1, label: 'POD 1', color: '#e53e3e',
-      reportUrl: 'https://apps.usw2.pure.cloud/directory/#/analytics/queues/activity?savedView=fb929a72-480c-4b63-96af-e8ccfdc85760',
       queues: [
         { id: '4879c768-5ed5-4949-aff1-ccbb0e3dad99', label: 'Chat Queue'  },
         { id: '0187e19e-f563-441e-ad62-2965f43de61f', label: 'Email Queue' },
@@ -260,7 +275,6 @@ const CONFIG = {
     },
     {
       id: 2, label: 'POD 2', color: '#805ad5',
-      reportUrl: 'https://apps.usw2.pure.cloud/directory/#/analytics/queues/activity?savedView=32f1e023-d6d5-4b4c-8075-650b35ecd67a',
       queues: [
         { id: '250f7bde-3237-487b-8d91-88e87c41ee37', label: 'Chat Queue'  },
         { id: '7c2f0f59-bcd2-4b3e-884f-230f35b3d77d', label: 'Email Queue' },
@@ -269,7 +283,6 @@ const CONFIG = {
     },
     {
       id: 3, label: 'POD 3', color: '#3182ce',
-      reportUrl: 'https://apps.usw2.pure.cloud/directory/#/analytics/queues/activity?savedView=19b06f15-c033-4b65-a039-47dbf7da85ec',
       queues: [
         { id: '9d59c34a-3bb0-44d6-ab52-b609a4a42025', label: 'Chat Queue'  },
         { id: '8718ee30-ce41-4256-b35b-2b4287f210f5', label: 'Email Queue' },
@@ -278,7 +291,6 @@ const CONFIG = {
     },
     {
       id: 4, label: 'POD 4', color: '#d69e2e',
-      reportUrl: 'https://apps.usw2.pure.cloud/directory/#/analytics/queues/activity?savedView=b05bac58-65a2-430e-bd9f-3eda051b840b',
       queues: [
         { id: '24bbef42-f0e9-4636-9c7b-312fe7369337', label: 'Chat Queue'  },
         { id: 'a80216ca-0654-4540-bfe9-bdaa6df29a15', label: 'Email Queue' },
@@ -286,13 +298,21 @@ const CONFIG = {
       ],
     },
   ],
-  REFRESH_MS:       30000,
-  WARN_WAITING:     5,
-  CRIT_WAITING:     10,
-  LONGEST_WAIT_RED: 300,
+  VOICE_PANELS: [
+    { id: 'vp1', label: 'Care Experience Team', color: '#00b5d8', queueId: '17d0d069-2abe-4610-b21e-5b05e03996c2' },
+    { id: 'vp2', label: 'Client Support',        color: '#38a169', queueId: '1063d85e-1fc8-4d2e-a79b-27e1a85ec46e' },
+    { id: 'vp3', label: 'Health Care Coordinators', color: '#dd6b20', queueId: 'afc60433-9f55-4f1c-a696-96955cbb1753' },
+  ],
+  REFRESH_MS:   30000,
+  WARN_WAITING: 5,
+  CRIT_WAITING: 10,
 };
 
-function allQueues() { return CONFIG.PODS.flatMap(p => p.queues); }
+function allQueues() {
+  const qs = CONFIG.PODS.flatMap(p => p.queues);
+  CONFIG.VOICE_PANELS.forEach(vp => qs.push({ id: vp.queueId, label: 'Voice Queue' }));
+  return qs;
+}
 </script>
 
 <div class="wrapper">
@@ -313,9 +333,22 @@ function allQueues() { return CONFIG.PODS.flatMap(p => p.queues); }
       </div>
     </div>
   </header>
-  <div class="pods-container" id="pods-container">
-    <div style="text-align:center;padding:5rem 2rem;color:var(--muted)">
-      <div style="font-size:0.9rem">Connecting&hellip;</div>
+
+  <!-- View All Button -->
+  <div class="view-all-bar">
+    <a class="btn-view-all" id="btn-all-queues" href="#" target="_blank">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      View All Care Team Queues
+    </a>
+  </div>
+
+  <!-- Main grid -->
+  <div class="main-grid">
+    <div class="pods-container" id="pods-container">
+      <div style="text-align:center;padding:5rem 2rem;color:var(--muted);font-size:0.9rem">Connecting&hellip;</div>
+    </div>
+    <div class="voice-panels" id="voice-panels">
+      <div style="text-align:center;padding:3rem 1rem;color:var(--muted);font-size:0.9rem">Connecting&hellip;</div>
     </div>
   </div>
 </div>
@@ -331,8 +364,9 @@ function allQueues() { return CONFIG.PODS.flatMap(p => p.queues); }
 
 <script>
 document.querySelectorAll('#header-logo, #auth-logo').forEach(el => el.src = LOGO_SRC);
+document.getElementById('btn-all-queues').href = CONFIG.ALL_QUEUES_URL;
 
-let token = null, timer = null, firstRender = true, lastUpdated = null, secondsTimer = null;
+let token=null, timer=null, firstRender=true, lastUpdated=null, secondsTimer=null;
 
 // ── CLOCK ──
 setInterval(() => {
@@ -346,53 +380,58 @@ function startCountdown() {
   if (secondsTimer) clearInterval(secondsTimer);
   secondsTimer = setInterval(() => {
     const s = Math.round((Date.now() - lastUpdated) / 1000);
-    document.querySelectorAll('.ts-text').forEach(el => {
-      el.textContent = `Last updated ${s} second${s !== 1 ? 's' : ''} ago`;
-    });
+    document.querySelectorAll('.ts-text').forEach(el =>
+      el.textContent = `Last updated ${s} second${s!==1?'s':''} ago`);
   }, 1000);
 }
 
-// ── FAVICON ALERT ──
-let faviconTimer = null, faviconFlipState = false;
-function makeFaviconDataUrl(color) {
-  const c = document.createElement('canvas'); c.width=64; c.height=64;
-  const ctx = c.getContext('2d');
+// ── FAVICON ──
+let faviconTimer=null, faviconFlip=false;
+function makeFavicon(color) {
+  const c=document.createElement('canvas'); c.width=64; c.height=64;
+  const ctx=c.getContext('2d');
   ctx.beginPath(); ctx.arc(32,32,30,0,Math.PI*2); ctx.fillStyle=color; ctx.fill();
-  ctx.fillStyle='#ffffff'; ctx.font='bold 44px Arial'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('!',32,34);
+  ctx.fillStyle='#fff'; ctx.font='bold 44px Arial'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('!',32,34);
   return c.toDataURL('image/png');
 }
-const FAVICON_ALERT = makeFaviconDataUrl('#ff2222');
+const FAVICON_ALERT = makeFavicon('#ff2222');
 function setFavicon(href) {
   let l=document.querySelector("link[rel*='icon']");
   if(!l){l=document.createElement('link');l.rel='shortcut icon';document.head.appendChild(l);}
   l.type='image/png'; l.href=href;
 }
 function startAlertFlash() {
-  if(faviconTimer) return; faviconFlipState=false;
-  faviconTimer=setInterval(()=>{faviconFlipState=!faviconFlipState;setFavicon(faviconFlipState?FAVICON_ALERT:LOGO_SRC);},900);
+  if(faviconTimer) return;
+  faviconTimer=setInterval(()=>{faviconFlip=!faviconFlip;setFavicon(faviconFlip?FAVICON_ALERT:LOGO_SRC);},900);
 }
 function stopAlertFlash() {
-  if(!faviconTimer) return; clearInterval(faviconTimer); faviconTimer=null; faviconFlipState=false; setFavicon(LOGO_SRC);
+  if(!faviconTimer) return; clearInterval(faviconTimer); faviconTimer=null; faviconFlip=false; setFavicon(LOGO_SRC);
 }
-function checkAlertCondition(obs, agents) {
-  // Global favicon flash — any queue has waiting + no agents
+
+// ── ALERT CHECK ──
+function checkAlerts(obs, agents) {
   const anyAlert = allQueues().some(q => {
     const w=(obs[q.id]||{}).waiting||0, ag=agents[q.id]??null;
     return w>0 && (ag===0||ag===null);
   });
   anyAlert ? startAlertFlash() : stopAlertFlash();
 
-  // Per-POD label pulse — only if that POD has at least one queue with waiting + no agents
+  // POD labels
   CONFIG.PODS.forEach(pod => {
-    const podAlert = pod.queues.some(q => {
+    const alert = pod.queues.some(q => {
       const w=(obs[q.id]||{}).waiting||0, ag=agents[q.id]??null;
       return w>0 && (ag===0||ag===null);
     });
-    const labelEl = document.querySelector(`#pod-row-${pod.id} .pod-label-text`);
-    if(labelEl) {
-      if(podAlert) labelEl.classList.add('alerting');
-      else         labelEl.classList.remove('alerting');
-    }
+    const el = document.querySelector(`#pod-row-${pod.id} .pod-label-text`);
+    if(el) alert ? el.classList.add('alerting') : el.classList.remove('alerting');
+  });
+
+  // Voice panel titles
+  CONFIG.VOICE_PANELS.forEach(vp => {
+    const w=(obs[vp.queueId]||{}).waiting||0, ag=agents[vp.queueId]??null;
+    const alert = w>0 && (ag===0||ag===null);
+    const el = document.querySelector(`#${vp.id} .voice-panel-title`);
+    if(el) alert ? el.classList.add('alerting') : el.classList.remove('alerting');
   });
 }
 
@@ -437,7 +476,7 @@ async function getObservations() {
   const map={};
   for(const row of (data.results||[])){
     const qId=row.group?.queueId; if(!qId) continue;
-    if(!map[qId]) map[qId]={waiting:0,interacting:0,alerting:0,longestWaitSec:0};
+    if(!map[qId]) map[qId]={waiting:0,interacting:0,longestWaitSec:0};
     for(const d of (row.data||[])){
       if(d.metric==='oLongestWaiting'){
         const ms=d.stats?.calculatedMetricValue??0;
@@ -446,7 +485,6 @@ async function getObservations() {
       }
       if(d.metric==='oWaiting')     map[qId].waiting     +=d.stats?.count??0;
       if(d.metric==='oInteracting') map[qId].interacting +=d.stats?.count??0;
-      if(d.metric==='oAlerting')    map[qId].alerting    +=d.stats?.count??0;
     }
   }
   return map;
@@ -463,8 +501,7 @@ async function getAgents(queueId) {
 // ── HELPERS ──
 function fmtTime(sec) {
   if(!sec) return {v:'0:00',u:'h:mm'};
-  const h=Math.floor(sec/3600);
-  const m=Math.floor((sec%3600)/60);
+  const h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60);
   return {v:`${h}:${String(m).padStart(2,'0')}`,u:'h:mm'};
 }
 function health(waiting,ag) {
@@ -479,12 +516,12 @@ function cardClass(waiting,ag) {
   if(waiting>=CONFIG.WARN_WAITING) return 'warn';
   return 'ok';
 }
-function waitNumColor(w) {
+function waitColor(w) {
   if(w>=2) return '#ff4444';
   if(w===1) return '#ffcc00';
   return '#e2e8f0';
 }
-function agentNumColor(ag) {
+function agentColor(ag) {
   if(ag===null||ag===0) return null;
   if(ag===1) return '#4dff91';
   if(ag===2) return '#1aff6e';
@@ -493,114 +530,136 @@ function agentNumColor(ag) {
 }
 function channelIcon(label) {
   const l=label.toLowerCase();
-  if(l.includes('chat'))  return `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;opacity:0.85"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`;
-  if(l.includes('email')) return `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;opacity:0.85"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`;
-  return `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;opacity:0.85"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.64 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.55 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.29 6.29l1.27-.9a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`;
+  if(l.includes('chat'))  return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;opacity:0.85"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`;
+  if(l.includes('email')) return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;opacity:0.85"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`;
+  return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;opacity:0.85"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.64 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.55 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.29 6.29l1.27-.9a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`;
 }
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":'&#39;'}[c]));}
+
+// ── BUILD CARD HTML ──
+function buildCard(key, q, o, ag) {
+  const agDisplay=ag===null?'—':String(ag);
+  const h=health(o.waiting,ag), cc=cardClass(o.waiting,ag), lw=fmtTime(o.longestWaitSec);
+  const wColor=waitColor(o.waiting), aColor=agentColor(ag);
+  const badgeHtml=h.show
+    ?`<div class="badge ${h.cls}" id="badge-${key}">${h.label}</div>`
+    :`<div id="badge-${key}" style="display:none"></div>`;
+  return `
+    <div class="card-head">
+      <div class="card-name">${channelIcon(q.label)}${esc(q.label)}</div>${badgeHtml}
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Waiting<br><span style="color:transparent">_</span></div>
+        <div class="stat-val" id="sv-wait-${key}" style="color:${wColor}">${o.waiting}</div>
+        <div class="stat-unit" id="su-wait-${key}">interaction${o.waiting!==1?'s':''}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Agents on<br>Queue</div>
+        <div class="stat-val${aColor?'':' c-agent-zero'}" id="sv-ag-${key}" ${aColor?`style="color:${aColor}"`:''}>${agDisplay}</div>
+        <div class="stat-unit">staffed</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Longest<br>Waiting</div>
+        <div class="stat-val" id="sv-lw-${key}" style="color:#d9deff">${lw.v}</div>
+        <div class="stat-unit" id="su-lw-${key}">${lw.u}</div>
+      </div>
+    </div>
+    <div class="card-foot">
+      <div class="foot-left">
+        <span class="act-dot live"></span>
+        <span class="ts-text" id="foot-${key}">Last updated 0 seconds ago</span>
+      </div>
+    </div>`;
+}
+
+// ── UPDATE CARD ──
+function updateCard(key, o, ag) {
+  const agDisplay=ag===null?'—':String(ag);
+  const h=health(o.waiting,ag), cc=cardClass(o.waiting,ag), lw=fmtTime(o.longestWaitSec);
+  const wColor=waitColor(o.waiting), aColor=agentColor(ag);
+  const card=document.getElementById(`card-${key}`);
+  if(card) card.className=`card ${cc}`;
+  const badge=document.getElementById(`badge-${key}`);
+  if(badge){
+    if(h.show){badge.className=`badge ${h.cls}`;badge.textContent=h.label;badge.style.display='';}
+    else{badge.className='';badge.textContent='';badge.style.display='none';}
+  }
+  function flashVal(el,val,color,cls){
+    if(!el) return;
+    if(cls){el.className=`stat-val ${cls}`;el.removeAttribute('style');}
+    else{el.className='stat-val';el.style.color=color;}
+    if(el.textContent!==String(val)){el.textContent=val;el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash');}
+  }
+  flashVal(document.getElementById(`sv-wait-${key}`),o.waiting,wColor,null);
+  flashVal(document.getElementById(`sv-ag-${key}`),agDisplay,aColor,aColor?null:'c-agent-zero');
+  const lwEl=document.getElementById(`sv-lw-${key}`);
+  if(lwEl&&lwEl.textContent!==lw.v){lwEl.textContent=lw.v;lwEl.classList.remove('flash');void lwEl.offsetWidth;lwEl.classList.add('flash');}
+  const suLw=document.getElementById(`su-lw-${key}`); if(suLw) suLw.textContent=lw.u;
+  const suWait=document.getElementById(`su-wait-${key}`); if(suWait) suWait.textContent=`interaction${o.waiting!==1?'s':''}`;
+}
 
 // ── RENDER ──
 function render(obs, agents) {
-  const container=document.getElementById('pods-container');
-  if(firstRender) container.innerHTML='';
+  const podsContainer=document.getElementById('pods-container');
+  const voicePanels=document.getElementById('voice-panels');
+  if(firstRender){ podsContainer.innerHTML=''; voicePanels.innerHTML=''; }
 
-  CONFIG.PODS.forEach((pod,podIdx)=>{
+  // POD rows
+  CONFIG.PODS.forEach(pod => {
     let podRow=document.getElementById(`pod-row-${pod.id}`);
-    if(!podRow) {
+    if(!podRow){
       podRow=document.createElement('div');
       podRow.id=`pod-row-${pod.id}`; podRow.className='pod-row';
       podRow.style.setProperty('--pod-color',pod.color);
-
-      // POD label sidebar
       const labelCol=document.createElement('div'); labelCol.className='pod-label-col';
-      if(pod.reportUrl) labelCol.addEventListener('click', () => window.open(pod.reportUrl, '_blank'));
       const labelSpan=document.createElement('span'); labelSpan.className='pod-label-text';
-      labelSpan.textContent=pod.label;
-      labelCol.appendChild(labelSpan);
-      if(pod.reportUrl) {
-        const hint=document.createElement('div'); hint.className='launch-hint'; hint.textContent='View Report';
-        labelCol.appendChild(hint);
-      } podRow.appendChild(labelCol);
-
-      // Queue grid
+      labelSpan.textContent=pod.label; labelCol.appendChild(labelSpan);
+      podRow.appendChild(labelCol);
       const queuesDiv=document.createElement('div'); queuesDiv.className='pod-queues'; queuesDiv.id=`pod-queues-${pod.id}`;
-      podRow.appendChild(queuesDiv); container.appendChild(podRow);
+      podRow.appendChild(queuesDiv); podsContainer.appendChild(podRow);
     }
     const queuesDiv=document.getElementById(`pod-queues-${pod.id}`);
-
-    pod.queues.forEach((q,i)=>{
+    pod.queues.forEach(q => {
       const o=obs[q.id]||{waiting:0,interacting:0,longestWaitSec:0};
       const ag=agents[q.id]??null;
-      const agDisplay=ag===null?'—':String(ag);
-      const h=health(o.waiting,ag), cc=cardClass(o.waiting,ag), lw=fmtTime(o.longestWaitSec);
-      const wColor=waitNumColor(o.waiting), aColor=agentNumColor(ag);
       const key=`${pod.id}-${q.id}`;
-      const cardId=`card-${key}`;
-      let card=document.getElementById(cardId);
-
+      let card=document.getElementById(`card-${key}`);
       if(!card){
-        card=document.createElement('div'); card.id=cardId; card.className=`card ${cc}`;
-        const badgeHtml=h.show
-          ?`<div class="badge ${h.cls}" id="badge-${key}">${h.label}</div>`
-          :`<div id="badge-${key}" style="display:none"></div>`;
-        card.innerHTML=`
-          <div class="card-head">
-            <div class="card-name">${channelIcon(q.label)}${esc(q.label)}</div>
-            ${badgeHtml}
-          </div>
-          <div class="stats">
-            <div class="stat">
-              <div class="stat-label">Waiting<br><span style="color:transparent">_</span></div>
-              <div class="stat-val" id="sv-wait-${key}" style="color:${wColor}">${o.waiting}</div>
-              <div class="stat-unit" id="su-wait-${key}">interaction${o.waiting!==1?'s':''}</div>
-            </div>
-            <div class="stat">
-              <div class="stat-label">Agents on<br>Queue</div>
-              <div class="stat-val${aColor?'':' c-agent-zero'}" id="sv-ag-${key}" ${aColor?`style="color:${aColor}"`:''}>${agDisplay}</div>
-              <div class="stat-unit">staffed</div>
-            </div>
-            <div class="stat">
-              <div class="stat-label">Longest<br>Waiting</div>
-              <div class="stat-val" id="sv-lw-${key}" style="color:#d9deff">${lw.v}</div>
-              <div class="stat-unit" id="su-lw-${key}">${lw.u}</div>
-            </div>
-          </div>
-          <div class="card-foot">
-            <div class="foot-left">
-              <span class="act-dot live"></span>
-              <span class="ts-text" id="foot-${key}">Last updated 0 seconds ago</span>
-            </div>
-          </div>`;
-        queuesDiv.appendChild(card);
-      } else {
-        card.className=`card ${cc}`;
-        const badge=document.getElementById(`badge-${key}`);
-        if(badge){
-          if(h.show){badge.className=`badge ${h.cls}`;badge.textContent=h.label;badge.style.display='';}
-          else{badge.className='';badge.textContent='';badge.style.display='none';}
-        }
-        function flashVal(el,val,color,cls){
-          if(!el) return;
-          if(cls){el.className=`stat-val ${cls}`;el.removeAttribute('style');}
-          else{el.className='stat-val';el.style.color=color;}
-          if(el.textContent!==String(val)){el.textContent=val;el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash');}
-        }
-        flashVal(document.getElementById(`sv-wait-${key}`),o.waiting,wColor,null);
-        flashVal(document.getElementById(`sv-ag-${key}`),agDisplay,aColor,aColor?null:'c-agent-zero');
-        const lwEl=document.getElementById(`sv-lw-${key}`);
-        if(lwEl&&lwEl.textContent!==lw.v){lwEl.textContent=lw.v;lwEl.classList.remove('flash');void lwEl.offsetWidth;lwEl.classList.add('flash');}
-        const suLw=document.getElementById(`su-lw-${key}`);
-        if(suLw) suLw.textContent=lw.u;
-        const suWait=document.getElementById(`su-wait-${key}`);
-        if(suWait) suWait.textContent=`interaction${o.waiting!==1?'s':''}`;
-      }
+        card=document.createElement('div'); card.id=`card-${key}`; card.className=`card ${cardClass(o.waiting,ag)}`;
+        card.innerHTML=buildCard(key,q,o,ag); queuesDiv.appendChild(card);
+      } else { updateCard(key,o,ag); }
     });
+  });
+
+  // Voice panels
+  CONFIG.VOICE_PANELS.forEach(vp => {
+    let panel=document.getElementById(vp.id);
+    if(!panel){
+      panel=document.createElement('div');
+      panel.id=vp.id; panel.className='voice-panel';
+      panel.style.setProperty('--panel-color',vp.color);
+      const hdr=document.createElement('div'); hdr.className='voice-panel-header';
+      const title=document.createElement('div'); title.className='voice-panel-title';
+      title.textContent=vp.label; hdr.appendChild(title); panel.appendChild(hdr);
+      const q={id:vp.queueId,label:'Voice Queue'};
+      const o=obs[vp.queueId]||{waiting:0,interacting:0,longestWaitSec:0};
+      const ag=agents[vp.queueId]??null;
+      const key=`vp-${vp.queueId}`;
+      const card=document.createElement('div'); card.id=`card-${key}`; card.className=`card ${cardClass(o.waiting,ag)}`;
+      card.innerHTML=buildCard(key,q,o,ag); panel.appendChild(card);
+      voicePanels.appendChild(panel);
+    } else {
+      const o=obs[vp.queueId]||{waiting:0,interacting:0,longestWaitSec:0};
+      const ag=agents[vp.queueId]??null;
+      updateCard(`vp-${vp.queueId}`,o,ag);
+    }
   });
 
   firstRender=false;
 }
 
-// ── UI HELPERS ──
+// ── UI ──
 function setBadge(state,text){
   const b=document.getElementById('live-badge'),dot=document.getElementById('live-dot');
   b.className=`live-pill ${state}`; dot.className=`live-dot ${state==='live'?'pulse':''}`;
@@ -617,20 +676,20 @@ async function poll() {
   try {
     const obs=await getObservations();
     const agentMap={};
-    await Promise.all(allQueues().map(async q=>{agentMap[q.id]=await getAgents(q.id);}));
+    await Promise.all(allQueues().map(async q=>{ agentMap[q.id]=await getAgents(q.id); }));
     render(obs,agentMap);
-    checkAlertCondition(obs,agentMap);
+    checkAlerts(obs,agentMap);
     setBadge('live','LIVE');
     startCountdown();
   } catch(e) {
-    if(e.message!=='401'){setBadge('error','ERROR');toast(`Poll error: ${e.message}`,true);}
+    if(e.message!=='401'){ setBadge('error','ERROR'); toast(`Poll error: ${e.message}`,true); }
   }
 }
 
 // ── BOOT ──
 (function boot(){
   const t=parseToken();
-  if(t){token=t;window._t=t;localStorage.setItem('_dbgt',t);history.replaceState(null,'',window.location.pathname);poll();timer=setInterval(poll,CONFIG.REFRESH_MS);return;}
+  if(t){token=t;localStorage.setItem('_dbgt',t);history.replaceState(null,'',window.location.pathname);poll();timer=setInterval(poll,CONFIG.REFRESH_MS);return;}
   const stored=localStorage.getItem('_dbgt');
   if(stored){token=stored;poll();timer=setInterval(poll,CONFIG.REFRESH_MS);return;}
   showAuth();
