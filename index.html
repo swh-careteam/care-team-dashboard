@@ -102,20 +102,19 @@
     }
 
     /* ── POD ROWS ── */
-    .pods-container { display: flex; flex-direction: column; gap: clamp(0.5rem,1.2vw,1rem); }
+    .pods-container { display: flex; flex-direction: column; gap: 2.5rem; }
     .pod-row {
       display: flex; flex: 1;
       border-radius: 16px; overflow: hidden;
-      border: 2px solid var(--pod-color);
-      box-shadow: 0 0 28px color-mix(in srgb, var(--pod-color) 28%, transparent),
-                  0 0 56px color-mix(in srgb, var(--pod-color) 10%, transparent);
+      border: 3px solid rgba(255,255,255,0.55);
+      box-shadow: 0 0 16px rgba(80,120,200,0.12), 0 2px 8px rgba(0,0,0,0.4);
       background: rgba(4,7,15,0.5);
     }
     .pod-label-col {
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       width: clamp(64px,8vw,110px); min-width: clamp(64px,8vw,110px);
-      background: color-mix(in srgb, var(--pod-color) 10%, rgba(4,7,15,0.7));
-      border-right: 1px solid color-mix(in srgb, var(--pod-color) 30%, transparent);
+      background: rgba(255,255,255,0.03);
+      border-right: 1px solid rgba(255,255,255,0.07);
       padding: 0.75rem 0.5rem; flex-shrink: 0;
     }
     .pod-label-text {
@@ -134,28 +133,27 @@
       display: grid; grid-template-columns: repeat(3, 1fr);
       flex: 1; min-width: 0;
     }
-    .pod-queues > .card { border-radius: 0; border-right: 1px solid rgba(255,255,255,0.05); }
+    .pod-queues > .card { border-radius: 0; border-right: 2px solid rgba(255,255,255,0.15); }
     .pod-queues > .card:last-child { border-right: none; }
 
     /* ── RIGHT VOICE PANELS ── */
-    .voice-panels { display: flex; flex-direction: column; gap: clamp(0.5rem,1.2vw,1rem); }
+    .voice-panels { display: flex; flex-direction: column; gap: 2.5rem; }
     .voice-panel {
-      flex: 1; display: flex; flex-direction: column;
+      flex: 1; min-height: 0; display: flex; flex-direction: column;
       border-radius: 16px; overflow: hidden;
-      border: 2px solid var(--panel-color);
-      box-shadow: 0 0 24px color-mix(in srgb, var(--panel-color) 25%, transparent),
-                  0 0 48px color-mix(in srgb, var(--panel-color) 8%, transparent);
+      border: 3px solid rgba(255,255,255,0.55);
+      box-shadow: 0 0 16px rgba(80,120,200,0.12), 0 2px 8px rgba(0,0,0,0.4);
       background: rgba(4,7,15,0.5);
     }
     .voice-panel-header {
       padding: clamp(0.5rem,1vw,0.9rem) clamp(0.6rem,1.2vw,1.1rem) clamp(0.3rem,0.6vw,0.55rem);
-      border-bottom: 1px solid color-mix(in srgb, var(--panel-color) 25%, transparent);
-      background: color-mix(in srgb, var(--panel-color) 8%, rgba(4,7,15,0.7));
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.025);
     }
     .voice-panel-title {
       font-family: var(--font-h); font-size: clamp(0.7rem,1.1vw,0.95rem); font-weight: 700;
-      letter-spacing: 0.06em; text-transform: uppercase; color: #fff; line-height: 1.2;
-      text-shadow: 0 0 14px color-mix(in srgb, var(--panel-color) 50%, transparent);
+      letter-spacing: 0.06em; text-transform: uppercase; color: var(--panel-color); line-height: 1.2;
+      text-shadow: 0 0 14px color-mix(in srgb, var(--panel-color) 60%, transparent);
       text-align: center;
     }
     @keyframes panelAlertPulse {
@@ -163,7 +161,7 @@
       50%     { opacity:0.4; text-shadow: 0 0 2px var(--panel-color); filter: brightness(1); }
     }
     .voice-panel-title.alerting { animation: panelAlertPulse 1.6s ease-in-out infinite; }
-    .voice-panel > .card { border-radius: 0; flex: 1; }
+    .voice-panel > .card { border-radius: 0; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
 
     /* ── CARD ── */
     .card {
