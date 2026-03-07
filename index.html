@@ -120,8 +120,8 @@
     }
     .pod-label-text {
       font-family: var(--font-h); font-size: 0.88rem; font-weight: 700;
-      letter-spacing: 0.14em; text-transform: uppercase; color: var(--pod-color);
-      text-shadow: 0 0 16px color-mix(in srgb, var(--pod-color) 70%, transparent);
+      letter-spacing: 0.14em; text-transform: uppercase; color: #fff;
+      text-shadow: none;
       text-align: center; line-height: 1.2; white-space: nowrap;
     }
     @keyframes podAlertPulse {
@@ -148,15 +148,17 @@
       background: rgba(4,7,15,0.5);
     }
     .voice-panel-header {
-      padding: clamp(0.3rem,0.65vw,0.55rem) clamp(0.5rem,1vw,0.9rem) clamp(0.2rem,0.4vw,0.35rem);
+      padding: clamp(0.35rem,0.7vw,0.6rem) clamp(0.5rem,1vw,0.9rem) clamp(0.2rem,0.4vw,0.35rem);
       border-bottom: 1px solid color-mix(in srgb, var(--panel-color) 25%, transparent);
       background: color-mix(in srgb, var(--panel-color) 8%, rgba(4,7,15,0.7));
+      display: flex; align-items: center; gap: 0.5rem;
     }
+    .voice-panel-icon { flex-shrink: 0; opacity: 0.9; }
     .voice-panel-title {
-      font-family: var(--font-h); font-size: 0.88rem; font-weight: 700;
-      letter-spacing: 0.12em; text-transform: uppercase; color: #fff; line-height: 1.2;
-      text-shadow: 0 0 14px color-mix(in srgb, var(--panel-color) 60%, transparent), 0 0 32px color-mix(in srgb, var(--panel-color) 25%, transparent);
-      text-align: center;
+      font-family: var(--font-h); font-size: clamp(0.7rem,1vw,0.88rem); font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase; color: #fff; line-height: 1.2;
+      text-shadow: none;
+      flex: 1;
     }
     @keyframes panelAlertPulse {
       0%,100% { text-shadow: 0 0 8px rgba(255,60,60,0.9), 0 0 24px rgba(255,60,60,0.5), 0 0 48px rgba(255,60,60,0.25); color: #ff6666; }
@@ -455,6 +457,13 @@ function allQueues() {
     </a>
   </div>
 
+  <!-- Global Last Updated -->
+  <div style="display:flex;justify-content:flex-end;margin-bottom:0.3rem;">
+    <div style="display:flex;align-items:center;gap:0.4rem;font-family:var(--font-b);font-size:0.55rem;color:var(--muted);letter-spacing:0.04em;">
+      <span style="width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px rgba(0,230,118,0.8);animation:livepulse 2s ease-in-out infinite;flex-shrink:0;display:inline-block;"></span>
+      <span id="global-ts">Last updated 0 seconds ago</span>
+    </div>
+  </div>
   <!-- Summary Band -->
   <div class="summary-row" id="summary-band">
     <!-- Label -->
@@ -566,8 +575,8 @@ function startCountdown() {
   if (secondsTimer) clearInterval(secondsTimer);
   secondsTimer = setInterval(() => {
     const s = Math.round((Date.now() - lastUpdated) / 1000);
-    document.querySelectorAll('.ts-text').forEach(el =>
-      el.textContent = `Last updated ${s} second${s!==1?'s':''} ago`);
+    const globalTs = document.getElementById('global-ts');
+    if(globalTs) globalTs.textContent = `Last updated ${s} second${s!==1?'s':''} ago`;
   }, 1000);
 }
 
@@ -730,9 +739,7 @@ function buildCard(key, q, o, ag) {
     ?`<div class="badge ${h.cls}" id="badge-${key}">${h.label}</div>`
     :`<div id="badge-${key}" style="display:none"></div>`;
   return `
-    <div class="card-head">
-      <div class="card-name">${channelIcon(q.label)}${q.label==='__voice__'?'':esc(q.label)}</div>${badgeHtml}
-    </div>
+    ${q.label==='__voice__'?`<div class="card-head" style="padding-top:0.2rem;padding-bottom:0.1rem;"><div style="display:flex;align-items:center;justify-content:flex-end;width:100%;">${badgeHtml}</div></div>`:`<div class="card-head"><div class="card-name">${channelIcon(q.label)}${esc(q.label)}</div>${badgeHtml}</div>`}
     <div class="stats">
       <div class="stat">
         <div class="stat-label">Waiting</div>
@@ -748,12 +755,6 @@ function buildCard(key, q, o, ag) {
         <div class="stat-label">Longest Waiting</div>
         <div class="stat-val" id="sv-lw-${key}" style="color:#d9deff">${lw.v}</div>
         <div class="stat-unit" id="su-lw-${key}">${lw.u}</div>
-      </div>
-    </div>
-    <div class="card-foot">
-      <div class="foot-left">
-        <span class="act-dot live"></span>
-        <span class="ts-text" id="foot-${key}">Last updated 0 seconds ago</span>
       </div>
     </div>`;
 }
@@ -825,8 +826,10 @@ function render(obs, agents) {
       panel.id=vp.id; panel.className='voice-panel';
       panel.style.setProperty('--panel-color',vp.color);
       const hdr=document.createElement('div'); hdr.className='voice-panel-header';
+      const ico=document.createElement('span'); ico.className='voice-panel-icon';
+      ico.innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.64 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.55 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.29 6.29l1.27-.9a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`;
       const title=document.createElement('div'); title.className='voice-panel-title';
-      title.textContent=vp.label; hdr.appendChild(title); panel.appendChild(hdr);
+      title.textContent=vp.label; hdr.appendChild(ico); hdr.appendChild(title); panel.appendChild(hdr);
       const q={id:vp.queueId,label:'__voice__'};
       const o=obs[vp.queueId]||{waiting:0,interacting:0,longestWaitSec:0};
       const ag=agents[vp.queueId]??null;
