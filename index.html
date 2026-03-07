@@ -96,7 +96,7 @@
     /* ── MAIN GRID: pods left, voice panels right ── */
     .main-grid {
       display: grid;
-      grid-template-columns: 1fr 380px;
+      grid-template-columns: 1fr 456px;
       gap: clamp(0.6rem,1.2vw,1.2rem);
       align-items: stretch;
     }
@@ -960,31 +960,51 @@ async function getAggregates(queueIds, mediaType) {
 // ── PER-QUEUE AGGREGATES (today, all media types) ──
 // Single bulk call returning {queueId: {nOffered, nAbandoned}} for every queue
 async function getPerQueueAggregates() {
-  const allIds = allQueues().map(q => q.id);
+  // Build a mediaType lookup so we only count the correct media per queue
+  const queueMediaType = {};
+  CONFIG.PODS.forEach(pod => pod.queues.forEach(q => {
+    if (q.label === 'Voice Queue') queueMediaType[q.id] = 'voice';
+    else if (q.label === 'Chat Queue')  queueMediaType[q.id] = 'chat';
+    else if (q.label === 'Email Queue') queueMediaType[q.id] = 'email';
+  }));
+  CONFIG.VOICE_PANELS.forEach(vp => { queueMediaType[vp.queueId] = 'voice'; });
+
+  const allIds = Object.keys(queueMediaType);
   const now = new Date();
   const localMidnight = new Date(now); localMidnight.setHours(0,0,0,0);
   const interval = `${localMidnight.toISOString()}/${now.toISOString()}`;
+
   const data = await api('/api/v2/analytics/conversations/aggregates/query', {
     method: 'POST',
     body: JSON.stringify({
       interval,
       filter: {
-        type: 'or',
-        predicates: allIds.map(id => ({ type: 'dimension', dimension: 'queueId', value: id }))
+        type: 'and',
+        clauses: [
+          {
+            type: 'or',
+            predicates: allIds.map(id => ({ type: 'dimension', dimension: 'queueId', value: id }))
+          }
+        ]
       },
-      groupBy: ['queueId'],
+      groupBy: ['queueId', 'mediaType'],
       metrics: ['nOffered', 'tAbandon'],
     }),
   });
+
   const map = {};
   for (const row of (data.results || [])) {
-    const qid = row.group?.queueId; if (!qid) continue;
+    const qid       = row.group?.queueId;
+    const mediaType = row.group?.mediaType;
+    if (!qid || !mediaType) continue;
+    // Only count rows whose mediaType matches what we expect for this queue
+    if (queueMediaType[qid] && queueMediaType[qid] !== mediaType) continue;
     if (!map[qid]) map[qid] = { nOffered: 0, nAbandoned: 0 };
     for (const d of (row.data || [])) {
       for (const m of (d.metrics || [])) {
         const s = m.stats || {};
-        if (m.metric === 'nOffered')  map[qid].nOffered  += s.count ?? 0;
-        if (m.metric === 'tAbandon')  map[qid].nAbandoned += s.count ?? 0;
+        if (m.metric === 'nOffered') map[qid].nOffered  += s.count ?? 0;
+        if (m.metric === 'tAbandon') map[qid].nAbandoned += s.count ?? 0;
       }
     }
   }
