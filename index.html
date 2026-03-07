@@ -207,8 +207,10 @@
     .badge.no-agents { color: #ff4444;      border-color: rgba(255,68,68,0.6);   background: rgba(255,68,68,0.1); }
 
     /* ── STATS ── */
-    .stats { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: center; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); align-items: center; }
     .stat  { padding: clamp(0.2rem,0.5vw,0.5rem) clamp(0.15rem,0.3vw,0.3rem); display: flex; flex-direction: column; align-items: center; text-align: center; justify-content: center; }
+    .stat.stat-today { border-left: 1px solid rgba(255,255,255,0.1); opacity: 0.85; }
+    .stat.stat-today .stat-label { color: #8fa8c8; }
     .stat-label { font-family: var(--font-h); font-size: clamp(0.48rem,0.7vw,0.62rem); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #c8dff5; margin-bottom: 0.18rem; height: auto; display:block; text-align:center; line-height:1.25; }
     .stat-val   { font-family: var(--font-h); font-size: clamp(1.6rem,2.2vw,2.2rem); font-weight: 700; line-height: 1; letter-spacing: -0.01em; transition: color 0.5s; }
     .stat-unit  { font-size: clamp(0.48rem,0.65vw,0.58rem); color: #c8dff5; margin-top: 0.18rem; letter-spacing: 0.06em; }
@@ -562,6 +564,7 @@ document.querySelectorAll('#header-logo, #auth-logo').forEach(el => el.src = LOG
 document.getElementById('btn-all-queues').href = CONFIG.ALL_QUEUES_URL;
 
 let token=null, timer=null, firstRender=true, lastUpdated=null, secondsTimer=null;
+let perQueueAgg = {}; // {queueId: {nOffered, nAbandoned}}
 
 // ── CLOCK ──
 setInterval(() => {
@@ -734,6 +737,7 @@ function buildCard(key, q, o, ag) {
   const agDisplay=ag===null?'—':String(ag);
   const h=health(o.waiting,ag), cc=cardClass(o.waiting,ag), lw=fmtTime(o.longestWaitSec);
   const wColor=waitColor(o.waiting), aColor=agentColor(ag);
+  const isVoiceCard = q.label === 'Voice Queue';
   const badgeHtml=h.show
     ?`<div class="badge ${h.cls}" id="badge-${key}">${h.label}</div>`
     :`<div id="badge-${key}" style="display:none"></div>`;
@@ -755,6 +759,16 @@ function buildCard(key, q, o, ag) {
         <div class="stat-val" id="sv-lw-${key}" style="color:#d9deff">${lw.v}</div>
         <div class="stat-unit" id="su-lw-${key}">${lw.u}</div>
       </div>
+      <div class="stat stat-today">
+        <div class="stat-label">Offered<br>Today</div>
+        <div class="stat-val" id="sv-off-${key}" style="color:#c8dff5">—</div>
+        <div class="stat-unit" id="su-off-${key}">interactions</div>
+      </div>
+      ${isVoiceCard?`<div class="stat stat-today">
+        <div class="stat-label">Abandoned<br>Today</div>
+        <div class="stat-val" id="sv-abn-${key}" style="color:#ffab40">—</div>
+        <div class="stat-unit" id="su-abn-${key}">interactions</div>
+      </div>`:''}
     </div>`;
 }
 
@@ -944,6 +958,40 @@ async function getAggregates(queueIds, mediaType) {
   return { nOffered, nAbandoned, tAnsweredCount, avgWaitMs, slRatio };
 }
 
+// ── PER-QUEUE AGGREGATES (today, all media types) ──
+// Single bulk call returning {queueId: {nOffered, nAbandoned}} for every queue
+async function getPerQueueAggregates() {
+  const allIds = allQueues().map(q => q.id);
+  const now = new Date();
+  const localMidnight = new Date(now); localMidnight.setHours(0,0,0,0);
+  const interval = `${localMidnight.toISOString()}/${now.toISOString()}`;
+  const data = await api('/api/v2/analytics/conversations/aggregates/query', {
+    method: 'POST',
+    body: JSON.stringify({
+      interval,
+      filter: {
+        type: 'or',
+        predicates: allIds.map(id => ({ type: 'dimension', dimension: 'queueId', value: id }))
+      },
+      groupBy: ['queueId'],
+      metrics: ['nOffered', 'tAbandon'],
+    }),
+  });
+  const map = {};
+  for (const row of (data.results || [])) {
+    const qid = row.group?.queueId; if (!qid) continue;
+    if (!map[qid]) map[qid] = { nOffered: 0, nAbandoned: 0 };
+    for (const d of (row.data || [])) {
+      for (const m of (d.metrics || [])) {
+        const s = m.stats || {};
+        if (m.metric === 'nOffered')  map[qid].nOffered  += s.count ?? 0;
+        if (m.metric === 'tAbandon')  map[qid].nAbandoned += s.count ?? 0;
+      }
+    }
+  }
+  return map;
+}
+
 // ── SERVICE LEVEL ──
 // Uses oServiceLevel.ratio from Genesys (the real SL metric)
 // Falls back to tAnsweredCount / nOffered if oServiceLevel not available
@@ -1031,6 +1079,7 @@ async function poll() {
     const agentMap={};
     await Promise.all(allQueues().map(async q=>{ agentMap[q.id]=await getAgents(q.id); }));
     render(obs,agentMap);
+    if(Object.keys(perQueueAgg).length) applyPerQueueAgg(); // re-apply cached agg after re-render
     checkAlerts(obs,agentMap);
     setBadge('live','LIVE');
     startCountdown();
@@ -1043,20 +1092,64 @@ async function poll() {
 
 async function pollSummaryBand(obs, agentMap) {
   try {
-    const [voiceAgg, chatAgg, emailAgg] = await Promise.all([
+    const [voiceAgg, chatAgg, emailAgg, pqAgg] = await Promise.all([
       getAggregates(SUMMARY_CHANNELS.voice.queueIds, 'voice'),
       getAggregates(SUMMARY_CHANNELS.chat.queueIds,  'chat'),
       getAggregates(SUMMARY_CHANNELS.email.queueIds, 'email'),
+      getPerQueueAggregates(),
     ]);
     updateSummaryBand('voice', obs, agentMap, voiceAgg);
     updateSummaryBand('chat',  obs, agentMap, chatAgg);
     updateSummaryBand('email', obs, agentMap, emailAgg);
+    perQueueAgg = pqAgg;
+    applyPerQueueAgg();
   } catch(e) {
-    // Update with live data only (no interval data)
     updateSummaryBand('voice', obs, agentMap, null);
     updateSummaryBand('chat',  obs, agentMap, null);
     updateSummaryBand('email', obs, agentMap, null);
     console.warn('Summary band aggregate fetch failed:', e.message);
+  }
+}
+
+// Push per-queue offered/abandoned into all rendered cards
+function applyPerQueueAgg() {
+  // POD queues
+  CONFIG.PODS.forEach(pod => {
+    pod.queues.forEach(q => {
+      const key = `${pod.id}-${q.id}`;
+      const agg = perQueueAgg[q.id] || { nOffered: 0, nAbandoned: 0 };
+      const isVoice = q.label === 'Voice Queue';
+      updateCardAgg(key, agg, isVoice);
+    });
+  });
+  // Voice panels
+  CONFIG.VOICE_PANELS.forEach(vp => {
+    const key = `vp-${vp.queueId}`;
+    const agg = perQueueAgg[vp.queueId] || { nOffered: 0, nAbandoned: 0 };
+    updateCardAgg(key, agg, true);
+  });
+}
+
+function updateCardAgg(key, agg, isVoice) {
+  const offEl = document.getElementById(`sv-off-${key}`);
+  const offU  = document.getElementById(`su-off-${key}`);
+  if (offEl) {
+    if (offEl.textContent !== String(agg.nOffered)) {
+      offEl.textContent = agg.nOffered;
+      offEl.classList.remove('flash'); void offEl.offsetWidth; offEl.classList.add('flash');
+    }
+    if (offU) offU.textContent = agg.nOffered === 1 ? 'interaction' : 'interactions';
+  }
+  if (isVoice) {
+    const abEl = document.getElementById(`sv-abn-${key}`);
+    const abU  = document.getElementById(`su-abn-${key}`);
+    if (abEl) {
+      if (abEl.textContent !== String(agg.nAbandoned)) {
+        abEl.textContent = agg.nAbandoned;
+        abEl.classList.remove('flash'); void abEl.offsetWidth; abEl.classList.add('flash');
+      }
+      if (abU) abU.textContent = agg.nAbandoned === 1 ? 'interaction' : 'interactions';
+    }
   }
 }
 
