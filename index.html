@@ -420,7 +420,8 @@ const CONFIG = {
     { id: 'vp3', label: 'Health Care Coordinators', color: '#dd6b20', queueId: 'afc60433-9f55-4f1c-a696-96955cbb1753' },
     { id: 'vp4', label: 'Telemedica Team',          color: '#9f7aea', queueId: 'adc56012-6856-4a18-bfc3-b1dd4680c8ee' },
   ],
-  REFRESH_MS:   60000,
+  REFRESH_MS:      60000,  // observations + summary band
+  AGENT_REFRESH_MS: 90000,  // agent On Queue counts (slower — presence changes less frequently)
   WARN_WAITING: 5,
   CRIT_WAITING: 10,
 };
@@ -668,13 +669,13 @@ async function getObservations() {
     body:JSON.stringify({
       filter:{type:'and',clauses:[{type:'or',predicates:ids.map(id=>({type:'dimension',dimension:'queueId',value:id}))}]},
       groupBy:['queueId'],
-      metrics:['oWaiting','oInteracting','oAlerting','oLongestWaiting','oOnQueueUsers'],
+      metrics:['oWaiting','oInteracting','oAlerting','oLongestWaiting'],
     }),
   });
   const map={};
   for(const row of (data.results||[])){
     const qId=row.group?.queueId; if(!qId) continue;
-    if(!map[qId]) map[qId]={waiting:0,interacting:0,longestWaitSec:0,onQueue:0};
+    if(!map[qId]) map[qId]={waiting:0,interacting:0,longestWaitSec:0};
     for(const d of (row.data||[])){
       if(d.metric==='oLongestWaiting'){
         const ms=d.stats?.calculatedMetricValue??0;
@@ -683,24 +684,21 @@ async function getObservations() {
       }
       if(d.metric==='oWaiting')     map[qId].waiting     +=d.stats?.count??0;
       if(d.metric==='oInteracting') map[qId].interacting +=d.stats?.count??0;
-      // oOnQueueUsers returns one row per routing-status qualifier.
-      // Only IDLE and INTERACTING mean the agent is actively on-queue.
-      // NOT_RESPONDING and COMMUNICATING are excluded intentionally.
-      // Routing status is singular per agent so no double-counting risk.
-      if(d.metric==='oOnQueueUsers' &&
-         (d.qualifier==='IDLE' || d.qualifier==='INTERACTING')){
-        map[qId].onQueue += d.stats?.count??0;
-      }
     }
   }
   return map;
 }
 
 // ── AGENTS ──
-// On-queue count = oOnQueueUsers[IDLE] + oOnQueueUsers[INTERACTING] from observations.
-// Zero extra API calls — rides free in the existing observations POST.
-function agentCountFromObs(obs, queueId) {
-  return obs[queueId]?.onQueue ?? null;
+async function getAgents(queueId) {
+  // /users endpoint (not /members) is required for expand=presence to populate u.user.presence.
+  // Filter: systemPresence==='On Queue' matches Genesys On Queue count exactly (HAR-verified).
+  try {
+    const d=await api(`/api/v2/routing/queues/${queueId}/users?pageSize=100&joined=true&expand=presence`);
+    return (d.entities||[]).filter(u=>
+      u.user?.presence?.presenceDefinition?.systemPresence==='On Queue'
+    ).length;
+  } catch { return null; }
 }
 
 // ── HELPERS ──
@@ -1093,18 +1091,29 @@ function updateSummaryBand(channel, obs, agentMap, aggData) {
 }
 
 // ── POLL ──
+// Agent On Queue counts refresh every AGENT_REFRESH_MS (90s) on their own timer.
+// Observations + summary band refresh every REFRESH_MS (60s).
+// cachedAgentMap holds the last-known agent counts so obs renders never stall.
+async function pollAgents() {
+  try {
+    const fresh={};
+    await Promise.all(allQueues().map(async q=>{ fresh[q.id]=await getAgents(q.id); }));
+    Object.assign(cachedAgentMap, fresh);
+  } catch(e) {
+    if(e.message!=='401') console.warn('Agent poll error:', e.message);
+  }
+}
+
 async function poll() {
   try {
     const obs=await getObservations();
-    const agentMap={};
-    allQueues().forEach(q=>{ agentMap[q.id]=agentCountFromObs(obs,q.id); });
-    render(obs,agentMap);
+    render(obs, cachedAgentMap);
     if(Object.keys(perQueueAgg).length) applyPerQueueAgg(); // re-apply cached agg after re-render
-    checkAlerts(obs,agentMap);
+    checkAlerts(obs, cachedAgentMap);
     setBadge('live','LIVE');
     startCountdown();
     // Fetch aggregates for summary band (fire & update, non-blocking for render)
-    pollSummaryBand(obs, agentMap);
+    pollSummaryBand(obs, cachedAgentMap);
   } catch(e) {
     if(e.message!=='401'){ setBadge('error','ERROR'); toast(`Poll error: ${e.message}`,true); }
   }
@@ -1173,10 +1182,17 @@ function updateCardAgg(key, agg, isVoice) {
 
 // ── BOOT ──
 (function boot(){
+  function startTimers(){
+    // Prime agent cache immediately, then start both independent timers.
+    pollAgents();
+    agentTimer = setInterval(pollAgents, CONFIG.AGENT_REFRESH_MS);
+    poll();
+    timer = setInterval(poll, CONFIG.REFRESH_MS);
+  }
   const t=parseToken();
-  if(t){token=t;localStorage.setItem('_dbgt',t);history.replaceState(null,'',window.location.pathname);poll();timer=setInterval(poll,CONFIG.REFRESH_MS);return;}
+  if(t){token=t;localStorage.setItem('_dbgt',t);history.replaceState(null,'',window.location.pathname);startTimers();return;}
   const stored=localStorage.getItem('_dbgt');
-  if(stored){token=stored;poll();timer=setInterval(poll,CONFIG.REFRESH_MS);return;}
+  if(stored){token=stored;startTimers();return;}
   showAuth();
 })();
 </script>
