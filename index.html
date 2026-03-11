@@ -668,7 +668,7 @@ async function getObservations() {
     body:JSON.stringify({
       filter:{type:'and',clauses:[{type:'or',predicates:ids.map(id=>({type:'dimension',dimension:'queueId',value:id}))}]},
       groupBy:['queueId'],
-      metrics:['oWaiting','oInteracting','oAlerting','oLongestWaiting','oOnQueueUsers'],
+      metrics:['oWaiting','oInteracting','oAlerting','oLongestWaiting','oActiveUsers'],
     }),
   });
   const map={};
@@ -681,17 +681,18 @@ async function getObservations() {
         const s=ms>0?Math.round((Date.now()-ms)/1000):0;
         if(s>map[qId].longestWaitSec) map[qId].longestWaitSec=s;
       }
-      if(d.metric==='oWaiting')       map[qId].waiting     +=d.stats?.count??0;
-      if(d.metric==='oInteracting')   map[qId].interacting +=d.stats?.count??0;
-      if(d.metric==='oOnQueueUsers')  map[qId].onQueue     +=d.stats?.count??0;
+      if(d.metric==='oWaiting')     map[qId].waiting   +=d.stats?.count??0;
+      if(d.metric==='oInteracting') map[qId].interacting+=d.stats?.count??0;
+      // oActiveUsers = agents logged in and on-queue (matches Genesys "On Queue" count).
+      // It has no qualifier sub-rows so a simple assignment avoids double-counting.
+      if(d.metric==='oActiveUsers')  map[qId].onQueue    =d.stats?.count??0;
     }
   }
   return map;
 }
 
 // ── AGENTS ──
-// Agent counts are now embedded in getObservations() via oOnQueueUsers —
-// no extra API calls needed.  This function just reads from the obs map.
+// Agent counts come from oActiveUsers in the observations query — 0 extra API calls.
 function agentCountFromObs(obs, queueId) {
   return obs[queueId]?.onQueue ?? null;
 }
@@ -1089,7 +1090,7 @@ function updateSummaryBand(channel, obs, agentMap, aggData) {
 async function poll() {
   try {
     const obs=await getObservations();
-    // Build agentMap from oOnQueueUsers already in the obs response — 0 extra API calls
+    // oActiveUsers in obs = agents on-queue per Genesys. No extra API calls needed.
     const agentMap={};
     allQueues().forEach(q=>{ agentMap[q.id]=agentCountFromObs(obs,q.id); });
     render(obs,agentMap);
