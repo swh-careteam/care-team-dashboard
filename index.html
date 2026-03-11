@@ -93,10 +93,10 @@
     }
     .btn-view-all svg { flex-shrink: 0; }
 
-    /* ── MAIN GRID: pods left, voice panels right ── */
+    /* ── MAIN GRID: voice panels left, pods right ── */
     .main-grid {
       display: grid;
-      grid-template-columns: 1fr 456px;
+      grid-template-columns: 456px 1fr;
       gap: clamp(0.6rem,1.2vw,1.2rem);
       align-items: stretch;
     }
@@ -131,7 +131,7 @@
     .pod-label-text.alerting { animation: podAlertPulse 2.2s ease-in-out infinite; }
 
     .pod-queues {
-      display: grid; grid-template-columns: 1fr 1fr 1.55fr;
+      display: grid; grid-template-columns: 1.55fr 1fr 1fr;
       flex: 1; min-width: 0;
     }
     .pod-queues > .card { border-radius: 0; border-right: 1px solid rgba(255,255,255,0.18); }
@@ -286,7 +286,7 @@
     }
     /* ── CHANNEL COLUMNS ── */
     .summary-channels {
-      display: grid; grid-template-columns: 1fr 1fr 1.55fr;
+      display: grid; grid-template-columns: 1.55fr 1fr 1fr;
       flex: 1; min-width: 0;
     }
     .summary-channel {
@@ -384,33 +384,33 @@ const CONFIG = {
     {
       id: 1, label: 'POD 1', color: '#e53e3e',
       queues: [
+        { id: '8aa2fa79-0bdb-4b2e-86f2-adce402a620c', label: 'Voice Queue' },
         { id: '4879c768-5ed5-4949-aff1-ccbb0e3dad99', label: 'Chat Queue'  },
         { id: '0187e19e-f563-441e-ad62-2965f43de61f', label: 'Email Queue' },
-        { id: '8aa2fa79-0bdb-4b2e-86f2-adce402a620c', label: 'Voice Queue' },
       ],
     },
     {
       id: 2, label: 'POD 2', color: '#805ad5',
       queues: [
+        { id: '2c5b51e5-c734-4b5c-a9a1-9d8ba4492dcc', label: 'Voice Queue' },
         { id: '250f7bde-3237-487b-8d91-88e87c41ee37', label: 'Chat Queue'  },
         { id: '7c2f0f59-bcd2-4b3e-884f-230f35b3d77d', label: 'Email Queue' },
-        { id: '2c5b51e5-c734-4b5c-a9a1-9d8ba4492dcc', label: 'Voice Queue' },
       ],
     },
     {
       id: 3, label: 'POD 3', color: '#3182ce',
       queues: [
+        { id: 'c28656d5-7840-4622-aa33-365bf5281c65', label: 'Voice Queue' },
         { id: '9d59c34a-3bb0-44d6-ab52-b609a4a42025', label: 'Chat Queue'  },
         { id: '8718ee30-ce41-4256-b35b-2b4287f210f5', label: 'Email Queue' },
-        { id: 'c28656d5-7840-4622-aa33-365bf5281c65', label: 'Voice Queue' },
       ],
     },
     {
       id: 4, label: 'POD 4', color: '#d69e2e',
       queues: [
+        { id: '9d231348-09f1-4b48-8780-607ea76d2c49', label: 'Voice Queue' },
         { id: '24bbef42-f0e9-4636-9c7b-312fe7369337', label: 'Chat Queue'  },
         { id: 'a80216ca-0654-4540-bfe9-bdaa6df29a15', label: 'Email Queue' },
-        { id: '9d231348-09f1-4b48-8780-607ea76d2c49', label: 'Voice Queue' },
       ],
     },
   ],
@@ -541,11 +541,11 @@ function allQueues() {
 
   <!-- Main grid -->
   <div class="main-grid">
-    <div class="pods-container" id="pods-container">
-      <div style="text-align:center;padding:5rem 2rem;color:var(--muted);font-size:0.9rem">Connecting&hellip;</div>
-    </div>
     <div class="voice-panels" id="voice-panels">
       <div style="text-align:center;padding:3rem 1rem;color:var(--muted);font-size:0.9rem">Connecting&hellip;</div>
+    </div>
+    <div class="pods-container" id="pods-container">
+      <div style="text-align:center;padding:5rem 2rem;color:var(--muted);font-size:0.9rem">Connecting&hellip;</div>
     </div>
   </div>
 </div>
