@@ -49,7 +49,7 @@
       --summary-lbl-bdr: rgba(58,128,255,0.22);
       --summary-title:   #4da6ff;
       --summary-tshadow: 0 0 16px rgba(77,166,255,0.55);
-      --summary-sub:     #3a5880;
+      --summary-sub:     #8fb0d9;
       --summary-ch-bg:   rgba(8,16,40,0.7);
       --summary-ch-sep:  rgba(255,255,255,0.22);
       --summary-ch-title:#fff;
@@ -91,6 +91,16 @@
       --pill-err-c:#ff5555; --pill-err-b:rgba(255,85,85,0.45); --pill-err-bg:rgba(255,85,85,0.07);
       --font-h: 'Rajdhani', sans-serif;
       --font-b: 'Exo 2', sans-serif;
+
+      /* Agent Status swatch palette (dark theme: neon, with glow) */
+      --swatch-onqueue:       #4fd4e8;
+      --swatch-onqueue-glow:  0 0 8px rgba(79,212,232,0.8);
+      --swatch-offqueue:      #ff4d5a;
+      --swatch-offqueue-glow: 0 0 8px rgba(255,77,90,0.8);
+      --swatch-available:     #00e676;
+      --swatch-warn:          #ffab00;
+      --swatch-crit:          #ff4d5a;
+      --swatch-glow:          0 0 6px currentColor;
     }
 
     /* ── LIGHT THEME ── */
@@ -136,7 +146,7 @@
       --summary-lbl-bdr: rgba(37,99,235,0.15);
       --summary-title:   #2563eb;
       --summary-tshadow: none;
-      --summary-sub:     #7a90aa;
+      --summary-sub:     #425c7a;
       --summary-ch-bg:   #fff;
       --summary-ch-sep:  rgba(0,0,0,0.07);
       --summary-ch-title:#1a2e4a;
@@ -176,6 +186,16 @@
       --pill-live-c:#0a9e5c; --pill-live-b:rgba(10,158,92,0.45); --pill-live-bg:rgba(10,158,92,0.08); --pill-live-s:0 0 16px rgba(10,158,92,0.15);
       --pill-off-b: rgba(37,99,235,0.2);
       --pill-err-c:#dc2626; --pill-err-b:rgba(220,38,38,0.45); --pill-err-bg:rgba(220,38,38,0.07);
+
+      /* Agent Status swatch palette (light theme: subdued, no glow) */
+      --swatch-onqueue:       #0891b2;
+      --swatch-onqueue-glow:  none;
+      --swatch-offqueue:      #b91c1c;
+      --swatch-offqueue-glow: none;
+      --swatch-available:     #0a8f52;
+      --swatch-warn:          #b07209;
+      --swatch-crit:          #b91c1c;
+      --swatch-glow:          none;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; }
@@ -448,7 +468,7 @@
       text-align: center; line-height: 1.2;
     }
     .summary-label-sub {
-      font-family: var(--font-b); font-size: 0.48rem; font-weight: 500;
+      font-family: var(--font-b); font-size: 0.6rem; font-weight: 500;
       color: var(--summary-sub); text-align: center; line-height: 1.4;
     }
     /* ── CHANNEL COLUMNS ── */
@@ -484,11 +504,11 @@
     .summary-sl-badge.sl-none { color: var(--sl-none-c); border-color: var(--sl-none-b); background: var(--sl-none-bg); }
     /* ── STATS ── */
     .summary-stats {
-      display: grid; grid-template-columns: repeat(5, 1fr);
-      flex: 1; align-items: end;
-      padding: 0 0.3rem 0.45rem;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      flex: 1; align-items: center;
+      padding: 0.35rem 0.3rem;
     }
-    .summary-stats.cols4 { grid-template-columns: repeat(4, 1fr); }
+    .summary-stats.cols3 { grid-template-columns: repeat(3, 1fr); }
     .summary-stat {
       display: flex; flex-direction: column; align-items: center; text-align: center;
       padding: 0.3rem 0.15rem 0.15rem;
@@ -526,7 +546,143 @@
     @keyframes numflash2 { 0%{opacity:0.3;transform:scale(0.94)} 100%{opacity:1;transform:scale(1)} }
     .summary-stat-val.flash { animation: numflash2 0.35s cubic-bezier(0.16,1,0.3,1); }
 
+    /* ── TOP ROW: Summary band + Agent Status side-by-side ── */
+    .top-row {
+      display: flex; align-items: stretch; gap: 0.75rem; flex-wrap: wrap;
+      margin-bottom: clamp(0.4rem,0.8vw,0.7rem);
+    }
+    /* Grow ratio 55/45; flex-basis sets the minimum proportional width. */
+    .top-row > .summary-row      { flex: 65 1 600px; margin-bottom: 0; min-width: 0; }
+    .top-row > .agent-status-row { flex: 35 1 360px; margin-bottom: 0; min-width: 0; }
+
+    /* ── AGENT STATUS CARD ── */
+    .agent-status-row {
+      display: flex;
+      border-radius: 16px; overflow: hidden;
+      border: 2px solid var(--summary-row-border);
+      box-shadow: var(--summary-row-shadow);
+      background: var(--summary-row-bg);
+    }
+    .agent-status-label {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      width: clamp(76px,7vw,110px); min-width: clamp(76px,7vw,110px);
+      background: var(--summary-lbl-bg);
+      border-right: 1px solid var(--summary-lbl-bdr);
+      padding: 0.9rem 0.5rem; flex-shrink: 0; gap: 0.45rem;
+    }
+    .agent-status-label .title {
+      font-family: var(--font-h); font-size: 0.82rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--summary-title);
+      text-shadow: var(--summary-tshadow);
+      text-align: center; line-height: 1.2;
+    }
+    .agent-status-label .sub {
+      font-family: var(--font-b); font-size: 0.58rem; font-weight: 500;
+      color: var(--summary-sub); text-align: center; line-height: 1.4;
+    }
+    .agent-status-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.55fr);
+      align-items: stretch;
+      flex: 1; min-width: 0;
+      background: var(--summary-ch-bg);
+    }
+    .agent-status-section {
+      display: flex; flex-direction: column;
+      justify-content: center;
+      gap: 0.55rem;
+      padding: 0.75rem 0.9rem;
+      min-width: 0;
+    }
+    .agent-status-section.onqueue-section {
+      border-right: 1px solid var(--summary-stat-sep);
+    }
+
+    /* Pills (On-Queue / Off-Queue totals) */
+    .agent-pill {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center; gap: 0.55rem;
+      padding: 0.36rem 0.85rem;
+      border-radius: 999px;
+      border: 1px solid var(--summary-lbl-bdr);
+      background: var(--summary-lbl-bg);
+      font-family: var(--font-h); font-size: 0.78rem; font-weight: 700;
+      color: var(--summary-stat-lbl); letter-spacing: 0.08em;
+      text-transform: uppercase; white-space: nowrap;
+      min-width: 0;
+    }
+    .agent-pill .swatch {
+      width: 12px; height: 12px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .agent-pill.onqueue  .swatch {
+      background: var(--swatch-onqueue);
+      box-shadow: var(--swatch-onqueue-glow);
+    }
+    .agent-pill.offqueue .swatch {
+      background: var(--swatch-offqueue);
+      box-shadow: var(--swatch-offqueue-glow);
+    }
+    .agent-pill .name  { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+    .agent-pill .count {
+      color: var(--summary-stat-val);
+      font-family: var(--font-h); font-size: 1.15rem; font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      margin-left: 0.4rem;
+    }
+
+    /* Stat columns under each pill.
+       The column itself is a 3-track grid (swatch | name | count) and each
+       .agent-stat-item is `display: contents`, so tracks size to the widest
+       name in the column. Count stays right next to the label rather than
+       pushed to the cell edge, while still aligning vertically within the
+       column. */
+    .agent-stats-col {
+      display: grid;
+      grid-template-columns: auto auto auto;
+      justify-content: start;
+      align-content: center;
+      row-gap: 0.45rem;
+      column-gap: 0.7rem;
+      min-width: 0;
+      font-family: var(--font-b); font-size: 0.8rem; font-weight: 500;
+      color: var(--summary-stat-lbl); letter-spacing: 0.02em;
+    }
+    /* Off-Queue section: two content-width sub-columns, centered as a block
+       under the Off-Queue pill. */
+    .agent-offqueue-grid {
+      display: grid;
+      grid-template-columns: auto auto;
+      justify-content: center;
+      column-gap: 1.75rem;
+      row-gap: 0;
+      align-items: start;
+    }
+    .agent-stat-item { display: contents; }
+    .agent-stats-col .swatch {
+      width: 10px; height: 10px; border-radius: 50%;
+      align-self: center;
+      box-shadow: var(--swatch-glow);
+    }
+    .agent-stat-item.onqueue-sub .swatch {
+      background: var(--swatch-onqueue); color: var(--swatch-onqueue);
+    }
+    .agent-stats-col .name  {
+      white-space: nowrap; align-self: center;
+    }
+    .agent-stats-col .count {
+      color: var(--summary-stat-val);
+      font-family: var(--font-h); font-size: 1rem; font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      justify-self: start; align-self: center;
+      margin-left: 0.1rem;
+    }
+
     @media (max-width: 900px) {
+      .top-row { flex-direction: column; }
+      .top-row > .summary-row,
+      .top-row > .agent-status-row { flex: 1 1 auto; width: 100%; }
       .summary-band { grid-template-columns: 1fr; }
       .main-grid { grid-template-columns: 1fr; }
       .voice-panels { flex-direction: row; flex-wrap: wrap; }
@@ -576,6 +732,11 @@ const CONFIG = {
   CLIENT_ID: 'b08e2b01-639a-4723-a708-7e479696255f',
   REGION:    'usw2.pure.cloud',
   ALL_QUEUES_URL: 'https://apps.usw2.pure.cloud/directory/#/analytics/queues/activity?savedView=203472c2-ccc9-48d6-9fd4-30b391690f2f',
+  // Every Care Team agent is a member of this queue. It is the single source
+  // of truth for total agent headcount, On-Queue count, and presence breakdown
+  // in the Agent Status card. Summing members across per-channel queues would
+  // double-count agents who are joined to multiple queues.
+  CARE_TEAM_MASTER_QUEUE_ID: '74bf3555-3c02-442d-9141-2a91b8d169aa',
   PODS: [
     {
       id: 1, label: 'POD 1', color: '#e53e3e',
@@ -666,6 +827,8 @@ function allQueues() {
       <span id="global-ts">Last updated 0 seconds ago</span>
     </div>
   </div>
+  <!-- Top Row: Summary Band + Agent Status -->
+  <div class="top-row">
   <!-- Summary Band -->
   <div class="summary-row" id="summary-band">
     <!-- Label -->
@@ -686,7 +849,6 @@ function allQueues() {
         </div>
         <div class="summary-stats">
           <div class="summary-stat"><div class="summary-stat-val" id="sb-voice-waiting">—</div><div class="summary-stat-lbl" id="sb-voice-waiting-lbl">Interactions<br>Waiting</div></div>
-          <div class="summary-stat"><div class="summary-stat-val" id="sb-voice-agents">—</div><div class="summary-stat-lbl">Agents<br>On-Queue</div></div>
           <div class="summary-stat"><div class="summary-stat-val" id="sb-voice-avgwait">—</div><div class="summary-stat-lbl">Avg Wait<br>Today</div></div>
           <div class="summary-stat"><div class="summary-stat-val" id="sb-voice-offered">—</div><div class="summary-stat-lbl">Offered<br>Today</div></div>
           <div class="summary-stat"><div class="summary-stat-val" id="sb-voice-abandoned">—</div><div class="summary-stat-lbl">Abandoned<br>Today</div></div>
@@ -705,9 +867,8 @@ function allQueues() {
           </div>
           <div class="summary-sl-badge sl-none" id="sb-chat-sl">SL —</div>
         </div>
-        <div class="summary-stats cols4">
+        <div class="summary-stats cols3">
           <div class="summary-stat"><div class="summary-stat-val" id="sb-chat-waiting">—</div><div class="summary-stat-lbl" id="sb-chat-waiting-lbl">Interactions<br>Waiting</div></div>
-          <div class="summary-stat"><div class="summary-stat-val" id="sb-chat-agents">—</div><div class="summary-stat-lbl">Agents<br>On-Queue</div></div>
           <div class="summary-stat"><div class="summary-stat-val" id="sb-chat-avgwait">—</div><div class="summary-stat-lbl">Avg Wait<br>Today</div></div>
           <div class="summary-stat"><div class="summary-stat-val" id="sb-chat-offered">—</div><div class="summary-stat-lbl">Offered<br>Today</div></div>
         </div>
@@ -725,9 +886,8 @@ function allQueues() {
           </div>
           <div class="summary-sl-badge sl-none" id="sb-email-sl">SL —</div>
         </div>
-        <div class="summary-stats cols4">
+        <div class="summary-stats cols3">
           <div class="summary-stat"><div class="summary-stat-val" id="sb-email-waiting">—</div><div class="summary-stat-lbl" id="sb-email-waiting-lbl">Interactions<br>Waiting</div></div>
-          <div class="summary-stat"><div class="summary-stat-val" id="sb-email-agents">—</div><div class="summary-stat-lbl">Agents<br>On-Queue</div></div>
           <div class="summary-stat"><div class="summary-stat-val" id="sb-email-avgwait">—</div><div class="summary-stat-lbl">Avg Wait<br>Today</div></div>
           <div class="summary-stat"><div class="summary-stat-val" id="sb-email-offered">—</div><div class="summary-stat-lbl">Offered<br>Today</div></div>
         </div>
@@ -737,6 +897,58 @@ function allQueues() {
         </div>
       </div>
     </div>
+  </div>
+  <!-- Agent Status -->
+  <div class="agent-status-row" id="agent-status-row">
+    <div class="agent-status-label">
+      <div class="title">Agent<br>Status</div>
+      <div class="sub">Live presence<br>across all agents</div>
+    </div>
+    <div class="agent-status-body">
+      <!-- On-Queue section: pill + on-queue routing breakdown -->
+      <div class="agent-status-section onqueue-section">
+        <div class="agent-pill onqueue">
+          <span class="swatch"></span>
+          <span class="name">On-Queue</span>
+          <span class="count" id="agent-onqueue-count">—</span>
+        </div>
+        <div class="agent-stats-col">
+          <div class="agent-stat-item onqueue-sub">
+            <span class="swatch"></span>
+            <span class="name">Idle</span>
+            <span class="count" id="agent-routing-idle">—</span>
+          </div>
+          <div class="agent-stat-item onqueue-sub">
+            <span class="swatch"></span>
+            <span class="name">Not responding</span>
+            <span class="count" id="agent-routing-notresp">—</span>
+          </div>
+          <div class="agent-stat-item onqueue-sub">
+            <span class="swatch"></span>
+            <span class="name">Interacting</span>
+            <span class="count" id="agent-routing-interacting">—</span>
+          </div>
+          <div class="agent-stat-item onqueue-sub">
+            <span class="swatch"></span>
+            <span class="name">Communicating</span>
+            <span class="count" id="agent-routing-communicating">—</span>
+          </div>
+        </div>
+      </div>
+      <!-- Off-Queue section: pill + 2-col presence grid (populated by initAgentLegend) -->
+      <div class="agent-status-section offqueue-section">
+        <div class="agent-pill offqueue">
+          <span class="swatch"></span>
+          <span class="name">Off-Queue</span>
+          <span class="count" id="agent-offqueue-count">—</span>
+        </div>
+        <div class="agent-offqueue-grid">
+          <div class="agent-stats-col" id="agent-legend-col-a"></div>
+          <div class="agent-stats-col" id="agent-legend-col-b"></div>
+        </div>
+      </div>
+    </div>
+  </div>
   </div>
 
   <!-- Main grid -->
@@ -894,6 +1106,115 @@ async function getAgents(queueId) {
     const d=await api(`/api/v2/routing/queues/${queueId}/members?pageSize=100&expand=routingStatus,presence`);
     return (d.entities||[]).filter(u=>u.user?.presence?.presenceDefinition?.systemPresence==='On Queue').length;
   } catch { return null; }
+}
+
+// ── AGENT STATUS (MASTER QUEUE) ──
+// Status buckets mirror the presences shown in the supervisor UI.
+// `sys`  = Genesys systemPresence ("AVAILABLE", "BUSY", ...) — case-insensitive match.
+// `key`  = the display label (and also matched against custom org presence names
+//          like "Meal" or "Training", which share systemPresence=AWAY but have
+//          a distinct presenceDefinition.name).
+// Order matches the supervisor mockup: OK (green) → amber (off-task but in-shift)
+// → red (unavailable). The `sys` value is the Genesys systemPresence bucket;
+// the `key` is what we match custom org presences against by display name.
+// Theme-aware swatch colors: hex values come from CSS vars (dark = neon,
+// light = subdued). Using var() keeps the JS output theme-agnostic.
+const AGENT_STATUSES = [
+  { key: 'Available', color: 'var(--swatch-available)', sys: 'AVAILABLE' },
+  { key: 'Away',      color: 'var(--swatch-warn)',      sys: 'AWAY'      },
+  { key: 'Break',     color: 'var(--swatch-warn)',      sys: 'BREAK'     },
+  { key: 'Meal',      color: 'var(--swatch-warn)',      sys: 'MEAL'      },
+  { key: 'Training',  color: 'var(--swatch-warn)',      sys: 'TRAINING'  },
+  { key: 'Meeting',   color: 'var(--swatch-crit)',      sys: 'MEETING'   },
+  { key: 'Busy',      color: 'var(--swatch-crit)',      sys: 'BUSY'      },
+];
+
+// Classify one user into a status bucket.
+// Prefer the DISPLAY name (presenceDefinition.name) because custom org
+// presences like "Meal" / "Meeting" / "Training" share systemPresence with
+// AWAY/BUSY/etc — the display name is what matches our bucket keys.
+function classifyPresence(user) {
+  const p = user && user.presence;
+  if (!p) return null;
+  const candidates = [
+    p.presenceDefinition && p.presenceDefinition.name,  // e.g. "Meal"
+    p.name,                                              // fallback
+    p.presenceDefinition && p.presenceDefinition.systemPresence, // e.g. "AVAILABLE"
+  ].filter(Boolean);
+  for (const cand of candidates) {
+    const s = String(cand).toLowerCase();
+    const hit = AGENT_STATUSES.find(b =>
+      b.key.toLowerCase() === s || b.sys.toLowerCase() === s
+    );
+    if (hit) return hit.key;
+  }
+  return null;
+}
+
+// Single API call against the master queue. Every Care Team agent is a
+// member of this queue (CARE_TEAM_MASTER_QUEUE_ID), so this gives a true
+// unique headcount — no need to loop & dedupe across per-channel queues.
+//
+// No `joined=true` filter: the Genesys live-activity "active agents" view
+// returns the full roster regardless of current join state, and we want
+// numbers that line up with what supervisors see there.
+//
+// Returns:
+//   total      — every active member of the master queue
+//   onQueue    — members with systemPresence "On Queue"
+//   offQueue   — sum of the counts buckets (matches what the legend shows,
+//                so the pill and the rows below always reconcile)
+//   counts     — presence breakdown of the OFF-QUEUE agents only
+//                (Available / Away / Break / Meal / Training / Meeting / Busy)
+//   routing    — routing-status breakdown of the ON-QUEUE agents only
+//                (idle / notResponding / interacting / communicating)
+async function getCareTeamAgents() {
+  const qid = CONFIG.CARE_TEAM_MASTER_QUEUE_ID;
+  const counts  = Object.fromEntries(AGENT_STATUSES.map(s => [s.key, 0]));
+  const routing = { idle: 0, notResponding: 0, interacting: 0, communicating: 0 };
+  let total = 0, onQueue = 0;
+
+  try {
+    const d = await api(`/api/v2/routing/queues/${qid}/members?pageSize=200&expand=presence&expand=routingStatus`);
+    for (const ent of (d.entities || [])) {
+      const u = ent.user; if (!u) continue;
+      total++;
+
+      // systemPresence "On Queue" is the single source of truth for on-queue state.
+      const sysP = u.presence && u.presence.presenceDefinition && u.presence.presenceDefinition.systemPresence;
+      const isOnQueue = String(sysP || '').toLowerCase() === 'on queue';
+
+      if (isOnQueue) {
+        onQueue++;
+        // Route on-queue agents into routing buckets. The routingStatus object
+        // can live either on the Member entity or nested on the user — try both.
+        const rs = String(
+          (ent.routingStatus && ent.routingStatus.status) ||
+          (u.routingStatus   && u.routingStatus.status)   || ''
+        ).toUpperCase();
+        switch (rs) {
+          case 'IDLE':          routing.idle++;          break;
+          case 'NOT_RESPONDING':routing.notResponding++; break;
+          case 'INTERACTING':   routing.interacting++;   break;
+          case 'COMMUNICATING': routing.communicating++; break;
+          // OFF_QUEUE / unknown: do not bucket
+        }
+      } else {
+        // Off-queue agents feed the right-side presence legend only.
+        const bucket = classifyPresence(u);
+        if (bucket) counts[bucket]++;
+      }
+    }
+  } catch (e) {
+    console.warn('[agents] master-queue fetch failed:', e.message);
+    return null;
+  }
+
+  // Off-Queue pill = sum of the shown presence buckets so it always matches
+  // the rows below. Agents with an uncategorized presence (Offline, custom
+  // statuses not in AGENT_STATUSES, etc.) are intentionally excluded here.
+  const offQueue = Object.values(counts).reduce((a, b) => a + b, 0);
+  return { total, onQueue, offQueue, counts, routing };
 }
 
 // ── HELPERS ──
@@ -1236,11 +1557,14 @@ function fmtSummaryWait(ms) {
 // ── UPDATE SUMMARY BAND ──
 function updateSummaryBand(channel, obs, agentMap, aggData) {
   const cfg = SUMMARY_CHANNELS[channel];
-  // Live: sum waiting & agents across channel queues (POD queues only)
-  let totalWaiting = 0, totalAgents = 0;
+  // Live: sum waiting across channel queues (POD queues only).
+  // Per-channel "Agents On-Queue" was removed in v2 — the Agent Status card
+  // now shows a single accurate unique On-Queue count pulled from the master
+  // queue (CARE_TEAM_MASTER_QUEUE_ID), which avoids double-counting agents
+  // joined to multiple queues.
+  let totalWaiting = 0;
   for (const qid of cfg.queueIds) {
     totalWaiting += (obs[qid]||{}).waiting || 0;
-    totalAgents  += agentMap[qid] ?? 0;
   }
   const sl = calcSL(aggData);
   const slPct = sl !== null ? sl : null;
@@ -1254,7 +1578,6 @@ function updateSummaryBand(channel, obs, agentMap, aggData) {
       el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
     }
   }
-  flashUpdate(`sb-${channel}-agents`,  totalAgents);
   flashUpdate(`sb-${channel}-waiting`, totalWaiting);
   flashUpdate(`sb-${channel}-avgwait`, aggData ? fmtSummaryWait(aggData.avgWaitMs) : '—');
   flashUpdate(`sb-${channel}-offered`, aggData ? aggData.nOffered : '—');
@@ -1366,6 +1689,79 @@ function updateCardAgg(key, agg, isVoice) {
     }
   }
 }
+
+// ── AGENT STATUS RENDER ──
+// Off-queue presence legend is split across two columns:
+//   col A: Available, Away, Break, Meal
+//   col B: Training, Meeting, Busy
+function initAgentLegend() {
+  const colA = document.getElementById('agent-legend-col-a');
+  const colB = document.getElementById('agent-legend-col-b');
+  if (!colA || !colB) return;
+  if (colA.childElementCount && colB.childElementCount) return;
+
+  const keysA = ['Available', 'Away', 'Break', 'Meal'];
+  const keysB = ['Training', 'Meeting', 'Busy'];
+  const byKey = Object.fromEntries(AGENT_STATUSES.map(s => [s.key, s]));
+
+  const renderItems = keys => keys
+    .map(k => byKey[k])
+    .filter(Boolean)
+    .map(s => `
+      <div class="agent-stat-item">
+        <span class="swatch" style="background:${s.color};color:${s.color}"></span>
+        <span class="name">${s.key}</span>
+        <span class="count" id="agent-count-${s.key}">—</span>
+      </div>
+    `).join('');
+
+  colA.innerHTML = renderItems(keysA);
+  colB.innerHTML = renderItems(keysB);
+}
+
+function _setCount(id, val) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const s = String(val);
+  if (el.textContent === s) return;
+  el.textContent = s;
+  el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+}
+
+function renderAgentStatus(data) {
+  initAgentLegend();
+  if (!data) return; // leave last values on-screen if a single fetch failed
+  const { counts, onQueue, offQueue, routing } = data;
+
+  // Pills (totals)
+  _setCount('agent-onqueue-count',  onQueue);
+  _setCount('agent-offqueue-count', offQueue);
+
+  // Routing breakdown (on-queue sub-states)
+  _setCount('agent-routing-idle',          routing?.idle          || 0);
+  _setCount('agent-routing-notresp',       routing?.notResponding || 0);
+  _setCount('agent-routing-interacting',   routing?.interacting   || 0);
+  _setCount('agent-routing-communicating', routing?.communicating || 0);
+
+  // Legend counts (off-queue presence breakdown)
+  AGENT_STATUSES.forEach(s => {
+    _setCount('agent-count-' + s.key, counts[s.key] || 0);
+  });
+}
+
+// Wrap poll() so the master-queue fetch runs in parallel with the existing
+// queue observations / aggregates. A slow presence call never blocks the main
+// render, and vice versa.
+const _origPoll = poll;
+poll = async function() {
+  const main = _origPoll();
+  const agents = getCareTeamAgents()
+    .then(renderAgentStatus)
+    .catch(e => console.warn('[agents] render failed', e));
+  await Promise.all([main, agents]);
+};
+
+initAgentLegend();
 
 // ── BOOT ──
 (function boot(){
